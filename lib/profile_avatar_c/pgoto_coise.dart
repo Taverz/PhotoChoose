@@ -20,7 +20,8 @@ class PhotoChoise extends StatefulWidget {
   _PhotoChoiseState createState() => _PhotoChoiseState();
 }
 
-class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin {
+class _PhotoChoiseState extends State<PhotoChoise>
+    with TickerProviderStateMixin {
   late ProfileImageBloc _bloc;
 
   @override
@@ -45,191 +46,180 @@ class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin
   Widget buttonSheetCustom(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(left: 20, right: 20, bottom: 0, top: 0),
-      child: Expanded(
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 60,
-                    height: 60,
-
-                    // padding: EdgeInsets.only(right: 15),
-                  ),
-                  Spacer(),
-                  // clickableListDrop(context),
-
-                  BlocBuilder(
-                    bloc: _bloc,
-                    builder: (context, state) =>
-                        // if(state is )return;
-                        // return
-                        GestureDetector(
-                      onTap: () {
-                        // stateDrop();
-                        if (state is OpenListPath) {
-                          _bloc.add(CloseEvent());
-                        } else if (state is CloseListPath) {
-                          _bloc.add(OpenEvent());
-                        } else {
-                          _bloc.add(OpenEvent());
-                        }
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: 170,
-                        // height: 40,
-                        color: Colors.transparent,
-                        child: Text("Галерея",
-                            style: TextStyle(
-                                fontSize: 24,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                  ),
-
-                  Spacer(),
-
-                  IconButton(
-                      alignment: Alignment.centerRight,
-                      iconSize: 30,
-                      onPressed: () {
-                        _dataChoise;
-                        Navigator.pop(context, _dataChoise);
-                      },
-                      icon: Icon(Icons.close))
-                ],
-              ),
-            ),
-            Expanded(
-                child: Stack(
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: Row(
               children: [
-                Container(
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: BlocBuilder(
-                          bloc: _bloc,
-                          builder: (context, state) {
-                            if (state is CloseListPath) {
-                              if (state.index == null) {
-                                return gridViewFuture(context, 0);
-                              } else {
-                                return gridViewFuture(context, state.index!);
-                              }
-                            }
-                            return gridViewFuture(context, 0);
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      BlocBuilder(
-                        bloc: _bloc,
-                        builder: (context, state){
-                         // child: 
-                        if(state is Chosen){
-                          return
-                          buttonA(context, true, image: state.imageBytes );
-                        } 
-                        return buttonA(context, false);
-                   
-                        }
-                      ),
-                    ],
-                  ),
+                SizedBox(
+                  width: 60,
+                  height: 60,                
                 ),
+                Spacer(),                  
+
                 BlocBuilder(
                   bloc: _bloc,
-                  builder: (context, state) => Visibility(
-                      visible: state is OpenListPath,
-                      child: Positioned.fill(
-                        child: Container(
-                            color: Colors.white, child: listNamePath(context)),
-                      )),
-                )
-              ],
-            )),
-            SizedBox(height: 20),
-            SizedBox(height: 25),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showToast(BuildContext context) {
-    final scaffold = Scaffold.of(context);
-    scaffold.showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.black87,
-        content: const Text('Выберите фото', style: TextStyle(color: Colors.red),),
-        action: SnackBarAction(
-            label: 'Убрать',
-            onPressed:scaffold.hideCurrentSnackBar,
-        ),
-      ),
-    );
-  }
-
-  Widget buttonA(BuildContext context, bool click, {Uint8List? image} ){
-           return     
-            GestureDetector(
-                onTap: () {
-                  if(click == true){
-                    //  if(state is Chosen){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                        SimpleImageEditor(image!),
-                        // ImageEditorDemo(image!),
-                        //  PageEditorImage(image:image! ,)
-                      ),
-                    ); 
-                  // }
-                  }else{
-                    //показать toast
-                    // buttonSheetCustom(context)
-                    _showToast(context);
-                  }                 
-                  
-                },
-                child: Container(
-                  // alignment: Alignment.bottomCenter,
-                  // padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                  color: Colors.white,
-                  child: Center(
+                  builder: (context, state) =>
+                      // if(state is )return;
+                      // return
+                      GestureDetector(
+                    onTap: () {
+                      // stateDrop();
+                      if (state is OpenListPath) {
+                        _bloc.add(CloseEvent());
+                      } else if (state is CloseListPath) {
+                        _bloc.add(OpenEvent());
+                      } else {
+                        _bloc.add(OpenEvent());
+                      }
+                    },
                     child: Container(
-                      height: 50,
-                      width: MediaQuery.of(context).size.width < 800
-                          ? MediaQuery.of(context).size.width
-                          : 800,
-                      decoration: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(8.0)),
-                          //TODO: HEX color
-                          color: click
-                              ? Color(0xff536EFC)
-                              : Color(0xff949FDA)),
-                      child: Center(
-                        child: Text(
-                          "Далее",
+                      alignment: Alignment.center,
+                      width: 170,
+                      // height: 40,
+                      color: Colors.transparent,
+                      child: Text("Галерея",
                           style: TextStyle(
-                              fontSize: 24, color: Colors.white),
-                        ),
-                      ),
+                              fontSize: 24,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ),
-              );
+
+                Spacer(),
+
+                IconButton(
+                    alignment: Alignment.centerRight,
+                    iconSize: 30,
+                    onPressed: () {
+                      _dataChoise;
+                      Navigator.pop(context, _dataChoise);
+                    },
+                    icon: Icon(Icons.close))
+              ],
+            ),
+          ),
+          Expanded(
+              child: Stack(
+            children: [
+              Container(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: BlocBuilder(
+                        bloc: _bloc,
+                        builder: (context, state) {
+                          if (state is CloseListPath) {
+                            if (state.index == null) {
+                              return gridViewFuture(context, 0);
+                            } else {
+                              return gridViewFuture(context, state.index!);
+                            }
+                          }
+                          return gridViewFuture(context, 0);
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    BlocBuilder(
+                        bloc: _bloc,
+                        builder: (context, state) {
+                          // child:
+                          if (state is Chosen) {
+                            return buttonA(context, true,
+                                image: state.imageBytes);
+                          }
+                          return buttonA(context, false);
+                        }),
+                  ],
+                ),
+              ),
+              BlocBuilder(
+                bloc: _bloc,
+                builder: (context, state) => Visibility(
+                    visible: state is OpenListPath,
+                    child: Positioned.fill(
+                      child: Container(
+                          color: Colors.white, child: listNamePath(context)),
+                    )),
+              )
+            ],
+          )),
+          SizedBox(height: 20),
+          SizedBox(height: 25),
+        ],
+      ),
+    );
   }
 
-  //TODO:
+  //TODO: не работает, что делать?
+  void _showToast(BuildContext context) {
+    // final scaffold = Scaffold.of(context);
+    // scaffold.showSnackBar(
+    //   SnackBar(
+    //     backgroundColor: Colors.black87,
+    //     content: const Text(
+    //       'Выберите фото',
+    //       style: TextStyle(color: Colors.red),
+    //     ),
+    //     action: SnackBarAction(
+    //       label: '',
+    //       onPressed: scaffold.hideCurrentSnackBar,
+    //     ),
+    //   ),
+    // );
+  }
+
+  Widget buttonA(BuildContext context, bool click, {Uint8List? image}) {
+    return GestureDetector(
+      onTap: () {
+        if (click == true) {
+          //  if(state is Chosen){
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SimpleImageEditor(image!),
+              // ImageEditorDemo(image!),
+              //  PageEditorImage(image:image! ,)
+            ),
+          );
+          // }
+        } else {
+          //показать toast
+          // buttonSheetCustom(context)
+          _showToast(context);
+        }
+      },
+      child: Container(
+        // alignment: Alignment.bottomCenter,
+        // padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        color: Colors.white,
+        child: Center(
+          child: Container(
+            height: 50,
+            width: MediaQuery.of(context).size.width < 800
+                ? MediaQuery.of(context).size.width
+                : 800,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),              
+                color: click ? Color(0xff536EFC) : Color(0xff949FDA)),
+            child: Center(
+              child: Text(
+                "Далее",
+                style: TextStyle(fontSize: 24, color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  
 
   // _listNamePath <- listNamePath
   Widget listNamePath(BuildContext context) {
@@ -345,17 +335,6 @@ class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin
     );
   }
 
-
-
-
-
-
-
-
-
-
-
-
   Widget gridViewFuture(BuildContext context, int choise) {
     return FutureBuilder<List<AssetEntity>?>(
         future: loadAssetList(0),
@@ -407,24 +386,21 @@ class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin
         //   )
         // );
 
-      GridView.builder(
+        GridView.builder(
       itemCount: data.length,
       itemBuilder: (context, index) => BlocBuilder(
           bloc: _bloc,
-          builder: (context, state) {     
-                           
+          builder: (context, state) {
             if (state is Chosen) {
               if (state.index != null) {
                 return getItemGrid(data[index], index, context,
-                    state.index == index ? true : false, state );
+                    state.index == index ? true : false, state);
               } else {
                 return getItemGrid(data[index], index, context, false, state);
               }
             }
 
             return getItemGrid(data[index], index, context, false, state);
-
-
           }),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
@@ -438,92 +414,79 @@ class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin
   int _selectN = 09090;
   Uint8List? _dataChoise = null;
 
-  Widget getItemGrid(
-      AssetEntity data, int index, BuildContext context, bool choiseB, Object? ste ) {
-        //TODO: favorit
-        // data.isFavorite = true;
-        
-    return       
-        //TODO: не изменяется размер
-                
-              AnimatedSize(
-                vsync: this,
-                //MyAnimatedSizeWidget(
-                duration: const Duration(seconds: 1),
-                child: FutureBuilder(
-                    future: getImg(data),
-                    builder: (context, AsyncSnapshot<Uint8List?> assyn) {
-                      return GestureDetector(
-                        onTap: () async {
-                          
-                          
+  Widget getItemGrid(AssetEntity data, int index, BuildContext context,
+      bool choiseB, Object? ste) {
+    // favorit
+    // data.isFavorite = true;
 
-                          if(ste is Chosen){
-                            if(ste.index == index){
-                                _bloc.add(GridElementChooseNO());
-                                // data.isFavorite = !data.isFavorite ;
-                            }
-                          } else if( ste is ChooseNo){
-                                _bloc.add(GridElementChoose(index, assyn.data!)); 
-                                // data.isFavorite = !data.isFavorite ;
-                          }
-                          
-                                          
-                        },
-                        child: Container(
-                          color: Colors.white,
-                          // width: choiseB ? 85 : 100,
-                          // height: choiseB ? 85 : 100,
-                          child: Stack(
-                            children: [
-                              //Image
-                              Positioned(
-                                  child:
-                                      // FutureBuilder<Uint8List?>(
-                                      //     future: getImg(data),
-                                      //     builder: (context, AsyncSnapshot<Uint8List?> async) =>
-                                      // GestureDetector(
-                                      //   onTap: (){
-                                      //       //Препросмотр
-                                      //   },
-                                      //   child:
-                                      getImage(assyn.data, choiseB ? 85 : 150, choiseB ? 85 : 150)
-                                  // )
-                                  // )
-                                  ),
-                              //Пометить что он выбран
-                              Positioned(
-                                top: 5,
-                                right: 5,
-                                // child: GestureDetector(
-                                //   onTap: (){
-                                //       // просто выбор
-                                //   },
-                                child: Container(
-                                  width: 30,
-                                  height: 30,
-                                  child: IconButton(
-                                    onPressed: () {},
-                                    icon: choiseB 
-                                        ? Icon(
-                                            Icons.check_circle,
-                                            color: Colors.blue,
-                                          )
-                                        : Icon(
-                                            Icons.radio_button_unchecked,
-                                            color: Colors.white,
-                                          ),
-                                  ),
-                                ),
-                                // )
-                              )
-                            ],
-                          ),
+    return MyAnimatedSizeWidget(
+      child: FutureBuilder(
+          future: getImg(data),
+          builder: (context, AsyncSnapshot<Uint8List?> assyn) {
+            return GestureDetector(
+              onTap: () async {
+                if (ste is Chosen) {
+                  if (ste.index == index) {
+                    _bloc.add(GridElementChooseNO());
+                    // data.isFavorite = !data.isFavorite ;
+                  }
+                } else if (ste is ChooseNo) {
+                  _bloc.add(GridElementChoose(index, assyn.data!));
+                  // data.isFavorite = !data.isFavorite ;
+                }
+              },
+              child: Container(
+                color: Colors.white,
+                child: Stack(
+                  children: [
+                    //Image
+                    Positioned(
+                        child:
+                            // FutureBuilder<Uint8List?>(
+                            //     future: getImg(data),
+                            //     builder: (context, AsyncSnapshot<Uint8List?> async) =>
+                            // GestureDetector(
+                            //   onTap: (){
+                            //       //Препросмотр
+                            //   },
+                            //   child:
+                            getImage(assyn.data, choiseB ? 85 : 150,
+                                choiseB ? 85 : 150)
+                        // )
+                        // )
                         ),
-                      );
-                    }),
-              );
-        
+                    //Пометить что он выбран
+                    Positioned(
+                      top: 5,
+                      right: 5,
+                      // child: GestureDetector(
+                      //   onTap: (){
+                      //       // просто выбор
+                      //   },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: choiseB
+                              ? Icon(
+                                  Icons.check_circle,
+                                  color: Colors.blue,
+                                )
+                              : Icon(
+                                  Icons.radio_button_unchecked,
+                                  color: Colors.white,
+                                ),
+                        ),
+                      ),
+                      // )
+                    )
+                  ],
+                ),
+              ),
+            );
+          }),
+    );
   }
 
   Future<Uint8List?> getImg(AssetEntity data) async {
@@ -534,10 +497,8 @@ class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin
   Widget getImage(Uint8List? bytes, double wid, double hid) {
     // Uint8List? bytes = await data.thumbDataWithSize(30 ,30 );
 
-    return
-        
-      Center(
-        child: Container(
+    return Center(
+      child: Container(
         width: wid,
         height: hid,
         decoration: BoxDecoration(
@@ -548,8 +509,8 @@ class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin
                   image: MemoryImage(bytes),
                 ),
         ),
-          ),
-      );
+      ),
+    );
   }
 }
 
@@ -559,7 +520,7 @@ class MyAnimatedSizeWidget extends StatefulWidget {
   const MyAnimatedSizeWidget({
     Key? key,
     required this.child,
-    required this.duration,
+    this.duration = const Duration(seconds: 1),
   }) : super(key: key);
 
   @override

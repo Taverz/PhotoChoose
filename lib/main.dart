@@ -165,43 +165,43 @@ class _MyHomePageState extends State<MyHomePage>
           // ),
           SizedBox(height: 20,),
 
-          Container(
-            height: 300,
-            child: Expanded(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                child: FutureBuilder<List<AssetPathEntity>>(
-                    future: getNListNamePath(),
-                    builder:
-                        (context, AsyncSnapshot<List<AssetPathEntity>> assync) {
-                      if (assync.hasData) {
-                        return getViewListNamePath(assync.data!);
-                      } else if (assync.hasError) {
-                        return Center(
-                          child: SizedBox(
-                            child: Icon(
-                              Icons.error,
-                              color: Colors.red,
-                            ),
-                            width: 60,
-                            height: 60,
-                          ),
-                        );
-                      } else {
-                        return Center(
-                          child: SizedBox(
-                            child: CircularProgressIndicator(),
-                            width: 60,
-                            height: 60,
-                          ),
-                        );
-                      }
-                      // if(platform.isIOS){ // ios progress indicatior }
-                      // return CircularProgressIndicator();
-                    }),
-              ),
-            ),
-          ),
+          // Container(
+          //   height: 300,
+          //   child: Expanded(
+          //     child: Container(
+          //       width: MediaQuery.of(context).size.width,
+          //       child: FutureBuilder<List<AssetPathEntity>>(
+          //           future: getNListNamePath(),
+          //           builder:
+          //               (context, AsyncSnapshot<List<AssetPathEntity>> assync) {
+          //             if (assync.hasData) {
+          //               return getViewListNamePath(assync.data!);
+          //             } else if (assync.hasError) {
+          //               return Center(
+          //                 child: SizedBox(
+          //                   child: Icon(
+          //                     Icons.error,
+          //                     color: Colors.red,
+          //                   ),
+          //                   width: 60,
+          //                   height: 60,
+          //                 ),
+          //               );
+          //             } else {
+          //               return Center(
+          //                 child: SizedBox(
+          //                   child: CircularProgressIndicator(),
+          //                   width: 60,
+          //                   height: 60,
+          //                 ),
+          //               );
+          //             }
+          //             // if(platform.isIOS){ // ios progress indicatior }
+          //             // return CircularProgressIndicator();
+          //           }),
+          //     ),
+          //   ),
+          // ),
 
           //     SizedBox(
           //       height: 40,

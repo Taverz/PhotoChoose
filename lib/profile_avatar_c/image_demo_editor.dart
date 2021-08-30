@@ -16,8 +16,6 @@ import 'package:flutter/material.dart';
 // import 'package:oktoast/oktoast.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
-
-
 // import 'dart:async';
 import 'dart:io';
 // import 'dart:typed_data';
@@ -26,11 +24,6 @@ import 'dart:io';
 // import 'package:flutter/cupertino.dart';
 import 'package:photo_manager/photo_manager.dart';
 // import 'package:wechat_assets_picker/wechat_assets_picker.dart';
-
-
-
-
-
 
 //import 'dart:typed_data';
 // import 'dart:isolate';
@@ -71,7 +64,6 @@ class AspectRatioWidget extends StatelessWidget {
     );
   }
 }
-
 
 class AspectRatioPainter extends CustomPainter {
   AspectRatioPainter(
@@ -123,15 +115,6 @@ class AspectRatioPainter extends CustomPainter {
   }
 }
 
-
-
-
-
-
-
-
-
-
 class SimpleImageEditor extends StatefulWidget {
   Uint8List imageS;
   SimpleImageEditor(this.imageS);
@@ -172,7 +155,7 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
       ),
       floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.crop),
-          onPressed: ()  {
+          onPressed: () {
             cropImage(context);
           }),
     );
@@ -183,17 +166,12 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
       return;
     }
     final Uint8List fileData = Uint8List.fromList(
-      // kIsWeb
-
+            (await cropImageDataWithNativeLibraryM(
+                  state: editorKey.currentState!))!);
+        // kIsWeb
         // ? (await cropImageDataWithDartLibrary(state: editorKey.currentState!))!
-        // : 
+        // :
         
-        (
-          await cropImageDataWithNativeLibraryM(
-            state: editorKey.currentState!)
-            )!
-            
-            );
 
     //  showDialog(context: context, builder: (BuildContext context){
     //     return  Container(
@@ -209,33 +187,23 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
     //               ),
     //             );
     //   });
-              Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                        MyHomePage(title: "Title", image: fileData),
-                        // ImageEditorDemo(image!),
-                        //  PageEditorImage(image:image! ,)
-                      ),
-                    ); 
-            
 
-    // final String? fileFath =
-    //     await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
+    //TODO: Save local avatar
+    final String? fileFath =
+        await ImageSaver.save('avatar_profile.jpg', fileData);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MyHomePage(title: "Title", image: fileData),
+      ),
+    );
+
+    
 
     // showToast('save image : $fileFath');
     _cropping = false;
   }
 }
-
-
-
-
-
-
-
-
-
 
 class ImageEditorDemo extends StatefulWidget {
   Uint8List imageW;
@@ -263,7 +231,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   bool _cropping = false;
 
   EditorCropLayerPainter? _cropLayerPainter;
-Uint8List? _memoryImage;
+  Uint8List? _memoryImage;
   @override
   void initState() {
     _memoryImage = widget.imageW;
@@ -287,8 +255,8 @@ Uint8List? _memoryImage;
             onPressed: () {
               // if (kIsWeb) {
 
-                _cropImage(true,context);
-              // } 
+              _cropImage(true, context);
+              // }
               // else {
               //   _showCropDialog(context);
               // }
@@ -298,46 +266,48 @@ Uint8List? _memoryImage;
       ),
       body: Column(children: <Widget>[
         Expanded(
-          child: _memoryImage != null
-              ? ExtendedImage.memory(
-                  _memoryImage!,
-                  fit: BoxFit.contain,
-                  mode: ExtendedImageMode.editor,
-                  enableLoadState: true,
-                  extendedImageEditorKey: editorKey,
-                  initEditorConfigHandler: (ExtendedImageState? state) {
-                    return EditorConfig(
-                      maxScale: 8.0,
-                      cropRectPadding: const EdgeInsets.all(20.0),
-                      hitTestSize: 20.0,
-                      cropLayerPainter: _cropLayerPainter!,
-                      initCropRectType: InitCropRectType.imageRect,
-                      cropAspectRatio: _aspectRatio!.value,
-                    );
-                  },
-                  cacheRawData: true,
-                )
-                :Center(child: Text("Error editor"),)
-              // : 
-              // ExtendedImage.asset(
-              //     'assets/image.jpg',
-              //     fit: BoxFit.contain,
-              //     mode: ExtendedImageMode.editor,
-              //     enableLoadState: true,
-              //     extendedImageEditorKey: editorKey,
-              //     initEditorConfigHandler: (ExtendedImageState? state) {
-              //       return EditorConfig(
-              //         maxScale: 8.0,
-              //         cropRectPadding: const EdgeInsets.all(20.0),
-              //         hitTestSize: 20.0,
-              //         cropLayerPainter: _cropLayerPainter!,
-              //         initCropRectType: InitCropRectType.imageRect,
-              //         cropAspectRatio: _aspectRatio!.value,
-              //       );
-              //     },
-              //     cacheRawData: true,
-              //   ),
-        ),
+            child: _memoryImage != null
+                ? ExtendedImage.memory(
+                    _memoryImage!,
+                    fit: BoxFit.contain,
+                    mode: ExtendedImageMode.editor,
+                    enableLoadState: true,
+                    extendedImageEditorKey: editorKey,
+                    initEditorConfigHandler: (ExtendedImageState? state) {
+                      return EditorConfig(
+                        maxScale: 8.0,
+                        cropRectPadding: const EdgeInsets.all(20.0),
+                        hitTestSize: 20.0,
+                        cropLayerPainter: _cropLayerPainter!,
+                        initCropRectType: InitCropRectType.imageRect,
+                        cropAspectRatio: _aspectRatio!.value,
+                      );
+                    },
+                    cacheRawData: true,
+                  )
+                : Center(
+                    child: Text("Error editor"),
+                  )
+            // :
+            // ExtendedImage.asset(
+            //     'assets/image.jpg',
+            //     fit: BoxFit.contain,
+            //     mode: ExtendedImageMode.editor,
+            //     enableLoadState: true,
+            //     extendedImageEditorKey: editorKey,
+            //     initEditorConfigHandler: (ExtendedImageState? state) {
+            //       return EditorConfig(
+            //         maxScale: 8.0,
+            //         cropRectPadding: const EdgeInsets.all(20.0),
+            //         hitTestSize: 20.0,
+            //         cropLayerPainter: _cropLayerPainter!,
+            //         initCropRectType: InitCropRectType.imageRect,
+            //         cropAspectRatio: _aspectRatio!.value,
+            //       );
+            //     },
+            //     cacheRawData: true,
+            //   ),
+            ),
       ]),
       bottomNavigationBar: BottomAppBar(
         //color: Colors.lightBlue,
@@ -652,24 +622,26 @@ Uint8List? _memoryImage;
 
       /// native library
       // if (useNative) {
-        fileData = await cropImageDataWithNativeLibraryM(
-            state: editorKey.currentState!);
+      fileData =
+          await cropImageDataWithNativeLibraryM(state: editorKey.currentState!);
 
-      showDialog(context: context, builder: (BuildContext context){
-        return  Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    image: fileData == null
-                        ? null
-                        : DecorationImage(
-                            fit: BoxFit.cover,
-                            image: MemoryImage(fileData),
-                          ),
-                  ),
-                );
-      });        
-      // } 
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                image: fileData == null
+                    ? null
+                    : DecorationImage(
+                        fit: BoxFit.cover,
+                        image: MemoryImage(fileData),
+                      ),
+              ),
+            );
+          });
+      // }
       // else {
       //   ///delay due to cropImageDataWithDartLibrary is time consuming on main thread
       //   ///it will block showBusyingDialog
@@ -695,11 +667,6 @@ Uint8List? _memoryImage;
     _cropping = false;
   }
 
-
-
-
-
-
   // Uint8List? _memoryImage;
   Future<void> _getImage() async {
     // _memoryImage = await pickImage(context);
@@ -710,11 +677,6 @@ Uint8List? _memoryImage;
     //   });
     // });
   }
-
-
-
-
-
 }
 
 class CustomEditorCropLayerPainter extends EditorCropLayerPainter {
@@ -773,24 +735,10 @@ class CircleEditorCropLayerPainter extends EditorCropLayerPainter {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Future<Uint8List?> pickImage(BuildContext context) async {
   List<AssetEntity> assets = <AssetEntity>[];
   return null;
-  // final List<AssetEntity>? result = 
+  // final List<AssetEntity>? result =
   //   await AssetPicker.pickAssets(
   //     context,
   //     maxAssets: 1,
@@ -820,16 +768,6 @@ class ImageSaver {
     return file?.path;
   }
 }
-
-
-
-
-
-
-
-
-
-
 
 // //import 'dart:typed_data';
 // import 'dart:isolate';
@@ -890,8 +828,6 @@ class ImageSaver {
 //   });
 // }
 
-
-
 Future<Uint8List?> cropImageDataWithNativeLibraryM(
     {required ExtendedImageEditorState state}) async {
   print('native library start cropping');
@@ -907,9 +843,7 @@ Future<Uint8List?> cropImageDataWithNativeLibraryM(
   final ImageEditorOption option = ImageEditorOption();
 
   // if (action.needCrop) {
-    option.addOption(
-  ClipOption.fromRect(cropRect!)
-  );
+  option.addOption(ClipOption.fromRect(cropRect!));
   // }
 
   // if (action.needFlip) {
@@ -923,10 +857,10 @@ Future<Uint8List?> cropImageDataWithNativeLibraryM(
 
   final DateTime start = DateTime.now();
   Uint8List? result = img;
-    result = await editImage(
-                image: img,
-                imageEditorOption: option,
-            );
+  result = await editImage(
+    image: img,
+    imageEditorOption: option,
+  );
   // await ImageEditor.editImage(
   //   image: img,
   //   imageEditorOption: option,
@@ -936,30 +870,24 @@ Future<Uint8List?> cropImageDataWithNativeLibraryM(
   return result;
 }
 
+// Future<Uint8List?> editImage({
+//   required Uint8List image,
+//   required ImageEditorOption imageEditorOption,
+// }) async {
+//   Uint8List? tmp = image;
+//   for (final group in imageEditorOption.groupList) {
+//     if (group.canIgnore) {
+//       continue;
+//     }
+//     final handler = ImageHandler.memory(tmp);
+//     final editOption = ImageEditorOption();
+//     for (final option in group) {
+//       editOption.addOption(option);
+//     }
+//     editOption.outputFormat = imageEditorOption.outputFormat;
 
-  // Future<Uint8List?> editImage({
-  //   required Uint8List image,
-  //   required ImageEditorOption imageEditorOption,
-  // }) async {
-  //   Uint8List? tmp = image;
-  //   for (final group in imageEditorOption.groupList) {
-  //     if (group.canIgnore) {
-  //       continue;
-  //     }
-  //     final handler = ImageHandler.memory(tmp);
-  //     final editOption = ImageEditorOption();
-  //     for (final option in group) {
-  //       editOption.addOption(option);
-  //     }
-  //     editOption.outputFormat = imageEditorOption.outputFormat;
+//     tmp = await handler.handleAndGetUint8List(editOption);
+//   }
 
-  //     tmp = await handler.handleAndGetUint8List(editOption);
-  //   }
-
-  //   return tmp;
-  // }
-
-
-
-
-
+//   return tmp;
+// }
