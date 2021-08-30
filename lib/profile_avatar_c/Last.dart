@@ -1,13 +1,9 @@
 import 'dart:typed_data';
 
-import 'package:dsf/animation.dart';
-import 'package:dsf/block/listpath_event.dart';
-import 'package:dsf/block/listpath_state.dart';
 import 'package:dsf/block/profileimage_block.dart';
 import 'package:dsf/block/profileimage_event.dart';
 import 'package:dsf/block/profileimage_state.dart';
-import 'package:dsf/page_editor_image.dart';
-import 'package:dsf/profile_avatar_c/ListPath.dart';
+
 import 'package:dsf/profile_avatar_c/sfer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +16,7 @@ class MenuView extends StatefulWidget {
   _MenuViewState createState() => _MenuViewState();
 }
 
-class _MenuViewState extends State<MenuView> with TickerProviderStateMixin{
+class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
   late ProfileImageBloc _bloc;
 
   @override
@@ -356,16 +352,20 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin{
         //   )
         // );
 
-     GridView.builder(
+      GridView.builder(
       itemCount: data.length,
-      itemBuilder: (context, index) => 
-      BlocBuilder(
+      itemBuilder: (context, index) => BlocBuilder(
           bloc: _bloc,
           builder: (context, state) {
             // TODO: при выборе не убирается отметка
+
             if (state is Chosen) {
-              return getItemGrid(data[index], index, context,
-                  state.index == index ? true : false);
+              if (state.index != null) {
+                return getItemGrid(data[index], index, context,
+                    state.index == index ? true : false);
+              } else {
+                return getItemGrid(data[index], index, context, false);
+              }
             }
             return getItemGrid(data[index], index, context, false);
           }),
@@ -383,73 +383,98 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin{
 
   Widget getItemGrid(
       AssetEntity data, int index, BuildContext context, bool choiseB) {
-        Uint8List? byte;
-    return GestureDetector(
-      onTap: () async {
-        // Uint8List?
-         byte = await getImg(data);
-        // choiseSet(data2!, index);
-        _bloc.add(GridElementChoose(index, byte!)); //
+    return
+        // GestureDetector(
+        //   onTap: () async {
+        //     Uint8List? byte = await getImg(data);
+        //     // choiseSet(data2!, index);
+        //     _bloc.add(GridElementChoose(index, byte!)); //
 
-        // _bloc.choiseElement( index);
-      },
-      child:
-      //TODO: не изменяется размер
-      AnimatedSize( 
-        vsync: this,
-      //MyAnimatedSizeWidget(
-        duration: const Duration(seconds: 1),
-        child: Container(
-          width: choiseB ? 85 : 100,
-          height: choiseB ? 85 : 100,
-          child: Stack(
-            children: [
-              //Image
-              Positioned(
-                  child: 
-                  // FutureBuilder<Uint8List?>(
-                  //     future: getImg(data),
-                  //     builder: (context, AsyncSnapshot<Uint8List?> async) =>
-                          // GestureDetector(
-                          //   onTap: (){
-                          //       //Препросмотр 
-                          //   },
-                          //   child:
-                          getImage(byte)
-                      // )
-              // )
-              ),
-              //Пометить что он выбран
-              Positioned(
-                top: 5,
-                right: 5,
-                // child: GestureDetector(
-                //   onTap: (){
-                //       // просто выбор
-                //   },
-                child: Container(
-                  width: 30,
-                  height: 30,
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: choiseB
-                        ? Icon(
-                            Icons.check_circle,
-                            color: Colors.blue,
-                          )
-                        : Icon(
-                            Icons.radio_button_unchecked,
-                            color: Colors.white,
+        //     // _bloc.choiseElement( index);
+        //   },
+        //   child:
+        //TODO: не изменяется размер
+        BlocBuilder(
+            bloc: _bloc,
+            builder: (context, state) {
+              
+              return AnimatedSize(
+                vsync: this,
+                //MyAnimatedSizeWidget(
+                duration: const Duration(seconds: 1),
+                child: FutureBuilder(
+                    future: getImg(data),
+                    builder: (context, AsyncSnapshot<Uint8List?> assyn) {
+                      return GestureDetector(
+                        onTap: () async {
+                          // Uint8List? byte = await getImg(data);
+                          // choiseSet(data2!, index);
+                          if(state is Chosen){
+                            if(state.index == index){
+                                _bloc.add(GridElementChooseNO());
+                            }
+                          } else if( state is ChooseNo){
+                                _bloc.add(GridElementChoose(index, assyn.data!)); 
+                          }
+                          
+
+                          // _bloc.choiseElement( index);
+                        },
+                        child: Container(
+                          width: choiseB ? 85 : 100,
+                          height: choiseB ? 85 : 100,
+                          child: Stack(
+                            children: [
+                              //Image
+                              Positioned(
+                                  child:
+                                      // FutureBuilder<Uint8List?>(
+                                      //     future: getImg(data),
+                                      //     builder: (context, AsyncSnapshot<Uint8List?> async) =>
+                                      // GestureDetector(
+                                      //   onTap: (){
+                                      //       //Препросмотр
+                                      //   },
+                                      //   child:
+                                      getImage(assyn.data)
+                                  // )
+                                  // )
+                                  ),
+                              //Пометить что он выбран
+                              Positioned(
+                                top: 5,
+                                right: 5,
+                                // child: GestureDetector(
+                                //   onTap: (){
+                                //       // просто выбор
+                                //   },
+                                child: Container(
+                                  width: 30,
+                                  height: 30,
+                                  child: IconButton(
+                                    onPressed: () {},
+                                    icon: choiseB
+                                        ? Icon(
+                                            Icons.check_circle,
+                                            color: Colors.blue,
+                                          )
+                                        : Icon(
+                                            Icons.radio_button_unchecked,
+                                            color: Colors.white,
+                                          ),
+                                  ),
+                                ),
+                                // )
+                              )
+                            ],
                           ),
-                  ),
-                ),
-                // )
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+                        ),
+                      );
+                    }),
+              );
+            });
+
+    // );
   }
 
   Future<Uint8List?> getImg(AssetEntity data) async {
@@ -461,14 +486,8 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin{
     // Uint8List? bytes = await data.thumbDataWithSize(30 ,30 );
 
     return
-        // final decoration = new BoxDecoration(
-        //   image: bytes == null ? null :
-        //   new DecorationImage(
-        //     image: new MemoryImage(bytes),
-        //   ),
-        // );
-
-        Container(
+        
+      Container(
       // width: 150,
       // height: 150,
       decoration: BoxDecoration(

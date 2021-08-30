@@ -1,26 +1,14 @@
 import 'package:dsf/block/profileimage_block.dart';
-import 'package:dsf/block/profileimage_event.dart';
 import 'package:dsf/block/profileimage_state.dart';
 import 'package:dsf/profile_avatar_c/Last.dart';
-import 'package:dsf/animation.dart';
 import 'package:dsf/profile_avatar_c/sfer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:imageq/imape_Page.dart';
-// import 'package:imageq/oze/assetpicker.dart';
-
-// import 'dart:typed_data';
-
-// import 'package:extended_image/extended_image.dart';
-// import 'package:flutter/widgets.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-import 'dart:io';
-import 'dart:typed_data';
 
-// import 'package:extended_image/extended_image.dart';
 import 'package:flutter/widgets.dart';
-// import 'package:photo_manager/photo_manager.dart';
+
 
 void main() {
   runApp(MyApp());

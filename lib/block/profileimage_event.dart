@@ -30,6 +30,6 @@ class OpenEvent extends ProfileImageEvent{
   OpenEvent();
 }
 
-class AccomodationErrorEvent extends ProfileImageEvent{
-  AccomodationErrorEvent();
+class GridElementChooseNO extends ProfileImageEvent{
+  GridElementChooseNO();
 }

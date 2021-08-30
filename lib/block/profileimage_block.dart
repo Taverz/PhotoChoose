@@ -36,7 +36,11 @@ class ProfileImageBloc extends Bloc<ProfileImageEvent, ProfileImageStates> {
         yield  CloseListPath();  
       }else if(event is ListPathChoise){
         yield  CloseListPath(index: event.index , listPath: event.pathList , );  
+      }else if(event is GridElementChooseNO){
+        yield  ChooseNo();  
       }
+      
+      
       // switch (event.runtimeType) {
 
       //   case ListPathChoise:
