@@ -5,6 +5,7 @@ import 'dart:ui';
 // import 'package:example/common/image_picker/image_picker.dart';
 // import 'package:example/common/utils/crop_editor_helper.dart';
 // import 'package:example/common/widget/common_widget.dart';
+import 'package:dsf/main.dart';
 import 'package:dsf/profile_avatar_c/hard.dart';
 import 'package:extended_image/extended_image.dart';
 // import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
@@ -171,13 +172,13 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
       ),
       floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.crop),
-          onPressed: () {
-            cropImage();
+          onPressed: ()  {
+            cropImage(context);
           }),
     );
   }
 
-  Future<void> cropImage() async {
+  Future<void> cropImage(BuildContext context) async {
     if (_cropping) {
       return;
     }
@@ -194,20 +195,30 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
             
             );
 
-     showDialog(context: context, builder: (BuildContext context){
-        return  Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    image: fileData == null
-                        ? null
-                        : DecorationImage(
-                            fit: BoxFit.cover,
-                            image: MemoryImage(fileData),
-                          ),
-                  ),
-                );
-      });        
+    //  showDialog(context: context, builder: (BuildContext context){
+    //     return  Container(
+    //               width: 50,
+    //               height: 50,
+    //               decoration: BoxDecoration(
+    //                 image: fileData == null
+    //                     ? null
+    //                     : DecorationImage(
+    //                         fit: BoxFit.cover,
+    //                         image: MemoryImage(fileData),
+    //                       ),
+    //               ),
+    //             );
+    //   });
+              Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                        MyHomePage(title: "Title", image: fileData!),
+                        // ImageEditorDemo(image!),
+                        //  PageEditorImage(image:image! ,)
+                      ),
+                    ); 
+            
 
     // final String? fileFath =
     //     await ImageSaver.save('extended_image_cropped_image.jpg', fileData);

@@ -137,48 +137,7 @@ class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin
                           buttonA(context, true, image: state.imageBytes );
                         } 
                         return buttonA(context, false);
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     if(state is Chosen){
-                        //       Navigator.push(
-                        //         context,
-                        //         MaterialPageRoute(
-                        //           builder: (context) =>
-                                
-                        //            PageEditorImage(image:state.imageBytes ,)
-                        //         ),
-                        //       ); 
-                        //     }
-                            
-                        //   },
-                        //   child: Container(
-                        //     // alignment: Alignment.bottomCenter,
-                        //     // padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                        //     color: Colors.white,
-                        //     child: Center(
-                        //       child: Container(
-                        //         height: 50,
-                        //         width: MediaQuery.of(context).size.width < 800
-                        //             ? MediaQuery.of(context).size.width
-                        //             : 800,
-                        //         decoration: BoxDecoration(
-                        //             borderRadius:
-                        //                 BorderRadius.all(Radius.circular(8.0)),
-                        //             //TODO: HEX color
-                        //             color: false
-                        //                 ? Color(0xff536EFC)
-                        //                 : Color(0xff949FDA)),
-                        //         child: Center(
-                        //           child: Text(
-                        //             "Далее",
-                        //             style: TextStyle(
-                        //                 fontSize: 24, color: Colors.white),
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ),
-                        // );
+                   
                         }
                       ),
                     ],
@@ -203,6 +162,20 @@ class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin
     );
   }
 
+  void _showToast(BuildContext context) {
+    final scaffold = Scaffold.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.black87,
+        content: const Text('Выберите фото', style: TextStyle(color: Colors.red),),
+        action: SnackBarAction(
+            label: 'Убрать',
+            onPressed:scaffold.hideCurrentSnackBar,
+        ),
+      ),
+    );
+  }
+
   Widget buttonA(BuildContext context, bool click, {Uint8List? image} ){
            return     
             GestureDetector(
@@ -221,9 +194,9 @@ class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin
                   // }
                   }else{
                     //показать toast
-                  }
-
-                 
+                    // buttonSheetCustom(context)
+                    _showToast(context);
+                  }                 
                   
                 },
                 child: Container(
@@ -438,11 +411,8 @@ class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin
       itemCount: data.length,
       itemBuilder: (context, index) => BlocBuilder(
           bloc: _bloc,
-          builder: (context, state) {
-            // TODO: при выборе не убирается отметка
-            
-               
-
+          builder: (context, state) {     
+                           
             if (state is Chosen) {
               if (state.index != null) {
                 return getItemGrid(data[index], index, context,
@@ -473,23 +443,9 @@ class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin
         //TODO: favorit
         // data.isFavorite = true;
         
-    return
-        // GestureDetector(
-        //   onTap: () async {
-        //     Uint8List? byte = await getImg(data);
-        //     // choiseSet(data2!, index);
-        //     _bloc.add(GridElementChoose(index, byte!)); //
-
-        //     // _bloc.choiseElement( index);
-        //   },
-        //   child:
+    return       
         //TODO: не изменяется размер
-        // BlocBuilder(
-        //     bloc: _bloc,
-        //     builder: (context, state) {
-              
-        //       return 
-              
+                
               AnimatedSize(
                 vsync: this,
                 //MyAnimatedSizeWidget(
@@ -512,11 +468,7 @@ class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin
                                 // data.isFavorite = !data.isFavorite ;
                           }
                           
-                          //TODO: 
-                          // data.isFavorite = !data.isFavorite ;
-                          //  data.isFavorite = !data.isFavorite ;
-
-                      
+                                          
                         },
                         child: Container(
                           width:  100,
@@ -574,9 +526,7 @@ class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin
                       );
                     }),
               );
-            // });
-
-    // );
+        
   }
 
   Future<Uint8List?> getImg(AssetEntity data) async {

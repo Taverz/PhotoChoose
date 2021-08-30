@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dsf/block/profileimage_block.dart';
 import 'package:dsf/block/profileimage_state.dart';
 import 'package:dsf/profile_avatar_c/pgoto_coise.dart';
@@ -38,7 +40,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  Uint8List? image;
+  MyHomePage({Key? key, this.image,  this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -49,7 +52,7 @@ class MyHomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
+  final String? title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -94,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage>
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text(widget.title!),
       ),
       body: Column(
         // Column is also a layout widget. It takes a list of children and
@@ -113,29 +116,31 @@ class _MyHomePageState extends State<MyHomePage>
         // horizontal).
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          BlocBuilder(
-            bloc: _bloc,
-            builder: (context, state) {
-              if (state is Chosen)
-                return Container(
+          // BlocBuilder(
+          //   bloc: _bloc,
+          //   builder: (context, state) {
+              // if (state is Chosen)
+                // return 
+                Container(
                   width: 150,
                   height: 150,
                   decoration: BoxDecoration(
-                    image: state.imageBytes == null
+                    color: Colors.grey,
+                    image: widget.image == null
                         ? null
                         : DecorationImage(
                             fit: BoxFit.cover,
-                            image: MemoryImage(state.imageBytes),
+                            image: MemoryImage(widget.image!),
                           ),
                   ),
-                );
-              return Container(
-                width: 150,
-                height: 150,
-                color: Colors.indigo,
-              );
-            },
-          ),
+                ),
+              // return Container(
+              //   width: 150,
+              //   height: 150,
+              //   color: Colors.indigo,
+              // );
+            // },
+          // ),
           //  BlocBuilder(
           //   bloc: _bloc ,
           //   builder: (context, state){
@@ -158,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage>
           //     ),
           //   ),
           // ),
-          // SizedBox(height: 20,),
+          SizedBox(height: 20,),
 
           Container(
             height: 300,
