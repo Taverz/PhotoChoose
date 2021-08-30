@@ -1,0 +1,700 @@
+import 'dart:typed_data';
+
+import 'package:dsf/animation.dart';
+import 'package:dsf/block/listpath_event.dart';
+import 'package:dsf/block/listpath_state.dart';
+import 'package:dsf/block/profileimage_block.dart';
+import 'package:dsf/block/profileimage_event.dart';
+import 'package:dsf/block/profileimage_state.dart';
+import 'package:dsf/profile_avatar_c/ListPath.dart';
+import 'package:dsf/profile_avatar_c/sfer.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:photo_manager/photo_manager.dart';
+
+class MenuView extends StatefulWidget {
+  MenuView({Key? key}) : super(key: key);
+
+  @override
+  _MenuViewState createState() => _MenuViewState();
+}
+
+class _MenuViewState extends State<MenuView> {
+  late ProfileImageBloc _bloc;
+  @override
+  void initState() {
+    _bloc = ProfileImageBloc(ChooseNo());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return buttonSheetCustom(context);
+  }
+
+  bool _isTapDropDown = false;
+
+  Widget buttonSheetCustom(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(left: 20, right: 20, bottom: 0, top: 0),
+      child: Expanded(
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 60,
+                    height: 60,
+
+                    // padding: EdgeInsets.only(right: 15),
+                  ),
+                  Spacer(),
+                  // clickableListDrop(context),
+
+                  //TODO: как поставить заголовок по центру
+                  BlocBuilder(
+                    bloc: _bloc,
+                    builder: (context, state) =>
+                        // if(state is )return;
+                        // return
+                        GestureDetector(
+                      onTap: () {
+                        // stateDrop();
+                        if (state is OpenListPath) {                         
+                          _bloc.add(CloseEvent());
+                        } else if (state is CloseListPath) {
+                           _bloc.add(OpenEvent());
+                        }else{
+                          _bloc.add(OpenEvent());
+                        }
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: 170,
+                        // height: 40,
+                        color: Colors.transparent,
+                        child: Text("Галерея",
+                            style: TextStyle(
+                                fontSize: 24,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                  ),
+
+                  Spacer(),
+
+                  IconButton(
+                      alignment: Alignment.centerRight,
+                      iconSize: 30,
+                      onPressed: () {
+                        _dataChoise;
+                        Navigator.pop(context, _dataChoise);
+                      },
+                      icon: Icon(Icons.close))
+                ],
+              ),
+            ),
+            Expanded(
+                child: AnimatedSwitcher(
+                    duration: const Duration(seconds: 1),
+                    child: Stack(
+                      children: [
+                        //TODOD:
+                        BlocBuilder(
+                          bloc:_bloc ,
+                          builder: (context, state){
+                            if(state is CloseListPath){
+
+                              return gridViewFuture(context, state.index!);
+                            }
+                            return gridViewFuture(context, 0);
+                          },
+                          
+                          ),
+                        // _isTapDropDown
+                        //     ? null
+                        //     :
+                        BlocBuilder(
+                          bloc: _bloc,
+                          builder: (context, state) =>
+                           Visibility(
+                              visible: state is OpenListPath ,//_isTapDropDown,
+                              child: Positioned.fill(
+                                child: Container(
+                                  color: Colors.white,
+                                  // width: 100,
+                                  // height: 100,
+                                  child: listNamePath(context)
+                                  // ListPathDrop(
+                                  //   ret: () {}, //chooisePath
+                                  // ),
+                                  //    ExpandedSection(
+                                  //     child: //listNamePath(context),
+                                  //     height: 100,
+                                  //     expand: _isScrollDown,
+                                  //   ),
+                                ),
+                              )),
+                            
+                        )
+                      ],
+                    ))),
+            SizedBox(height: 20),
+            BlocBuilder(
+              bloc: _bloc,
+              builder: (context, state) {
+                // if(state is )return;
+                return GestureDetector(
+                  onTap: () {
+                    // _bloc.add();
+                  },
+                  child: Container(
+                    // alignment: Alignment.bottomCenter,
+                    // padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    color: Colors.white,
+                    child: Center(
+                      child: Container(
+                        height: 50,
+                        width: MediaQuery.of(context).size.width < 800
+                            ? MediaQuery.of(context).size.width
+                            : 800,
+                        decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(8.0)),
+                            //TODO: HEX color
+                            color: Color(0xff536EFC)),
+                        child: Center(
+                          child: Text(
+                            "Подтвердить",
+                            style: TextStyle(fontSize: 24, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+            SizedBox(height: 25),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /////////////
+  ///
+  ///
+
+  // void stateDrop() {
+  //   print("stateDrop");
+  //   // WidgetsBinding.instance!
+  //   //     .addPostFrameCallback((_) =>
+
+  //   setState(() {
+  //     print("setState");
+  //     _isTapDropDown = !_isTapDropDown;
+  //   })
+  //       // )
+  //       ;
+  // }
+
+  ////////////////
+  ///
+  ///
+  ///
+  ///
+
+  //TODO:
+
+  // _listNamePath <- listNamePath
+  Widget listNamePath(BuildContext context) {
+    return Expanded(
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        child: FutureBuilder<List<AssetPathEntity>>(
+            future: getNListNamePath(),
+            builder: (context, AsyncSnapshot<List<AssetPathEntity>> assync) {
+              if (assync.hasData) {
+                return getViewListNamePath(assync.data!);
+              } else if (assync.hasError) {
+                return Center(
+                  child: SizedBox(
+                    child: Icon(
+                      Icons.error,
+                      color: Colors.red,
+                    ),
+                    width: 60,
+                    height: 60,
+                  ),
+                );
+              } else {
+                return Center(
+                  child: SizedBox(
+                    child: CircularProgressIndicator(),
+                    width: 60,
+                    height: 60,
+                  ),
+                );
+              }
+              // if(platform.isIOS){ // ios progress indicatior }
+              // return CircularProgressIndicator();
+            }),
+      ),
+    );
+  }
+
+  //TODO:
+
+  // _getViewListNamePath <- getViewListNamePath
+  Widget getViewListNamePath(List<AssetPathEntity> data) {
+    return ListView.separated(
+        separatorBuilder: (_, __) => Container(
+              margin: const EdgeInsetsDirectional.only(start: 60),
+              height: 3,
+              // color: theme.canvasColor,
+            ),
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          return BlocBuilder(
+            bloc: _bloc,
+            builder: (context, state) {
+              // if(state is OpenListPath)
+              return GestureDetector(
+                  onTap: () {
+                    print("выбор папки");
+                    // widget.chooisePath!(index); //data[index]  - AssetPathEntity
+                    _bloc.add(ListPathChoise(index, data));
+                    _bloc.add(CloseEvent());
+                  },
+                  child: getItemListName(data[index]));
+
+              // return Text("S");
+            },
+          );
+        });
+  }
+
+  // Widget animatoinSwitch(Widget child, Widget child2){
+  //   Animatio
+  //   return BlocListener(
+  //     bloc: mapBloc,
+  //     listener: (context, state) {
+  //       },
+  //     child: BlocBuilder(
+  //       bloc: mapBloc,
+  //       builder: ((BuildContext context, MapStates state) {
+  //           return AnimatedSwitcher(
+  //               duration: const Duration(milliseconds: 1000),
+  //               child: state
+  //                   ? child //Icon(Icons.face, size: 80, key: Key("80"))
+  //                   : child2, //Icon(Icons.face, size: 160, key: Key("160")),
+  //             );
+  //       })
+  //     )
+  //   );
+  // }
+
+  Widget getItemListName(AssetPathEntity data) {
+    return Container(
+      child: Row(
+        children: [
+          SizedBox(
+            width: 5,
+          ),
+          FutureBuilder<Uint8List?>(
+              future: getFirstThumbFromPathEntity(data),
+              builder: (context, AsyncSnapshot<Uint8List?> snapshot) {
+                return Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    image: snapshot.data == null
+                        ? null
+                        : DecorationImage(
+                            fit: BoxFit.cover,
+                            image: MemoryImage(snapshot.data!),
+                          ),
+                  ),
+                );
+              }),
+          SizedBox(
+            width: 8,
+          ),
+          Container(
+              padding: EdgeInsets.all(8),
+              child: Center(
+                  child: Text(
+                data.name,
+                style: TextStyle(fontSize: 18),
+              ))),
+          Spacer(),
+          Container(
+              padding: EdgeInsets.all(8),
+              child: Center(
+                  child: Text(
+                "(" + data.assetCount.toString() + ")",
+                style: TextStyle(fontSize: 18),
+              ))),
+        ],
+      ),
+    );
+  }
+
+  ///
+  ///
+////////////////////////////////
+
+  Widget gridViewFuture(BuildContext context, int choise) {
+    return FutureBuilder<List<AssetEntity>?>(
+        future: loadAssetList(0),
+        builder: (context, AsyncSnapshot<List<AssetEntity>?> assync) {
+          if (assync.hasData) {
+            return getGridView(assync.data!);
+          } else if (assync.hasError) {
+            return Center(
+              child: Container(
+                height: 60,
+                width: 60,
+                child: SizedBox(
+                  child: Icon(
+                    Icons.error,
+                    color: Colors.red,
+                  ),
+                  width: 50,
+                  height: 50,
+                ),
+              ),
+            );
+          } else {
+            return Center(
+              child: Container(
+                height: 60,
+                width: 60,
+                child: SizedBox(
+                  child: CircularProgressIndicator(),
+                  width: 50,
+                  height: 50,
+                ),
+              ),
+            );
+          }
+          // if(platform.isIOS){ // ios progress indicatior }
+          // return CircularProgressIndicator();
+        });
+  }
+
+  Widget getGridView(List<AssetEntity> data) {
+    return
+
+        // SliverGrid(
+        //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        //       crossAxisCount: 3,
+        //     ),
+        //     delegate: SliverChildBuilderDelegate(
+        //       (BuildContext context, int index) => getItemGrid(data[index], context),
+        //   )
+        // );
+
+        GridView.builder(
+      itemCount: data.length,
+      itemBuilder: (context, index) => getItemGrid(data[index], index, context),
+      //Container(color: Colors.blue[((index) % 9) * 100]),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 5,
+        mainAxisSpacing: 5,
+        // childAspectRatio: 0,
+      ),
+    );
+  }
+
+  // bool _select = true;
+  int _selectN = 09090;
+  Uint8List? _dataChoise = null;
+
+  // void choiseSet(Uint8List data, index) {
+  //   // WidgetsBinding.instance!
+  //   //     .addPostFrameCallback((_) =>
+
+  //   setState(() {
+  //     if (_selectN == index) {
+  //       _selectN = 09090;
+  //       //  _select = true;
+  //       //  imageSelect(data);
+
+  //     } else {
+  //       // _select = false;
+  //       _selectN = index;
+  //       _dataChoise = data;
+  //     }
+  //   })
+
+  //       // )
+
+  //       ;
+  // }
+
+  //TODO: may be SizedBox
+  //TODO: определение выбран эелемент или нет
+  Widget getItemGrid(AssetEntity data, int index, BuildContext context) {
+    return BlocBuilder(
+      bloc: _bloc,
+      builder: (context, state) {
+        if (state is ChooseNo) {
+          return GestureDetector(
+            onTap: () async {
+              Uint8List? byte = await getImg(data);
+              // choiseSet(data2!, index);
+              _bloc.add(GridElementChoose(index, byte!)); //
+              // _bloc.choiseElement( index);
+            },
+            child: MyAnimatedSizeWidget(
+              duration: const Duration(seconds: 1),
+              child: Container(
+                width: 100,
+                height: 100,
+                child: Stack(
+                  children: [
+                    //Image
+                    Positioned(
+                        child: FutureBuilder<Uint8List?>(
+                            future: getImg(data),
+                            builder:
+                                (context, AsyncSnapshot<Uint8List?> async) =>
+                                    // GestureDetector(
+                                    //   onTap: (){
+                                    //       //Препросмотр и обработка(обрезать)
+                                    //   },
+                                    //   child:
+                                    getImage(async.data)
+                            // )
+                            )),
+                    //Пометить что он выбран
+                    Positioned(
+                      top: 5,
+                      right: 5,
+                      // child: GestureDetector(
+                      //   onTap: (){
+                      //       // просто выбор
+                      //   },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        child: IconButton(
+                          onPressed: () {},
+                          icon:
+                              // state.choose
+                              //     ? Icon(
+                              //         Icons.check_circle,
+                              //         color: Colors.blue,
+                              //       )
+                              //     :
+                              Icon(
+                            Icons.radio_button_unchecked,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      // )
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        } else 
+        if (state is Chosen) {
+          return GestureDetector(
+            onTap: () async {
+              Uint8List? byte = await getImg(data);
+              // choiseSet(data2!, index);
+              _bloc.add(GridElementChoose(index, byte!)); //
+              
+              // _bloc.choiseElement( index);
+            },
+            child: MyAnimatedSizeWidget(
+              duration: const Duration(seconds: 1),
+              child: Container(
+                width: state.index == index ? 85 : 100,
+                height: state.index == index ? 85 : 100,
+                child: Stack(
+                  children: [
+                    //Image
+                    Positioned(
+                        child: FutureBuilder<Uint8List?>(
+                            future: getImg(data),
+                            builder:
+                                (context, AsyncSnapshot<Uint8List?> async) =>
+                                    // GestureDetector(
+                                    //   onTap: (){
+                                    //       //Препросмотр и обработка(обрезать)
+                                    //   },
+                                    //   child:
+                                    getImage(async.data)
+                            // )
+                            )),
+                    //Пометить что он выбран
+                    Positioned(
+                      top: 5,
+                      right: 5,
+                      // child: GestureDetector(
+                      //   onTap: (){
+                      //       // просто выбор
+                      //   },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: state.index == index
+                              ? Icon(
+                                  Icons.check_circle,
+                                  color: Colors.blue,
+                                )
+                              : Icon(
+                                  Icons.radio_button_unchecked,
+                                  color: Colors.white,
+                                ),
+                        ),
+                      ),
+                      // )
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+         return GestureDetector(
+            onTap: () async {
+              Uint8List? byte = await getImg(data);
+              // choiseSet(data2!, index);
+              _bloc.add(GridElementChoose(index, byte!)); //
+              // _bloc.choiseElement( index);
+            },
+            child: MyAnimatedSizeWidget(
+              duration: const Duration(seconds: 1),
+              child: Container(
+                width: 100,
+                height: 100,
+                child: Stack(
+                  children: [
+                    //Image
+                    Positioned(
+                        child: FutureBuilder<Uint8List?>(
+                            future: getImg(data),
+                            builder:
+                                (context, AsyncSnapshot<Uint8List?> async) =>
+                                    // GestureDetector(
+                                    //   onTap: (){
+                                    //       //Препросмотр и обработка(обрезать)
+                                    //   },
+                                    //   child:
+                                    getImage(async.data)
+                            // )
+                            )),
+                    //Пометить что он выбран
+                    Positioned(
+                      top: 5,
+                      right: 5,
+                      // child: GestureDetector(
+                      //   onTap: (){
+                      //       // просто выбор
+                      //   },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        child: IconButton(
+                          onPressed: () {},
+                          icon:
+                              // state.choose
+                              //     ? Icon(
+                              //         Icons.check_circle,
+                              //         color: Colors.blue,
+                              //       )
+                              //     :
+                              Icon(
+                            Icons.radio_button_unchecked,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      // )
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+
+        // return Center(child: Text("if"));
+      },
+    );
+  }
+
+  Future<Uint8List?> getImg(AssetEntity data) async {
+    Uint8List? bytes = await data.thumbDataWithSize(150, 150);
+    return bytes;
+  }
+
+  Widget getImage(Uint8List? bytes) {
+    // Uint8List? bytes = await data.thumbDataWithSize(30 ,30 );
+
+    return
+        // final decoration = new BoxDecoration(
+        //   image: bytes == null ? null :
+        //   new DecorationImage(
+        //     image: new MemoryImage(bytes),
+        //   ),
+        // );
+
+        Container(
+      // width: 150,
+      // height: 150,
+      decoration: BoxDecoration(
+        image: bytes == null
+            ? null
+            : DecorationImage(
+                fit: BoxFit.cover,
+                image: MemoryImage(bytes),
+              ),
+      ),
+    );
+  }
+}
+
+class MyAnimatedSizeWidget extends StatefulWidget {
+  final Widget child;
+  final Duration duration;
+  const MyAnimatedSizeWidget({
+    Key? key,
+    required this.child,
+    required this.duration,
+  }) : super(key: key);
+
+  @override
+  _AnimatedSizeWidgetState createState() => _AnimatedSizeWidgetState();
+}
+
+class _AnimatedSizeWidgetState extends State<MyAnimatedSizeWidget>
+    with TickerProviderStateMixin {
+  Widget build(BuildContext context) {
+    return AnimatedSize(
+      vsync: this,
+      duration: widget.duration,
+      child: widget.child,
+      curve: Curves.easeInOut,
+    );
+  }
+}
