@@ -1,14 +1,12 @@
 import 'package:dsf/block/profileimage_block.dart';
 import 'package:dsf/block/profileimage_state.dart';
-import 'package:dsf/profile_avatar_c/Last.dart';
+import 'package:dsf/profile_avatar_c/pgoto_coise.dart';
 import 'package:dsf/profile_avatar_c/sfer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-
 import 'package:flutter/widgets.dart';
-
 
 void main() {
   runApp(MyApp());
@@ -57,7 +55,8 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   int _counter = 0;
 
   bool _isScrollDown = false;
@@ -72,25 +71,25 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       _counter++;
     });
   }
-   late ProfileImageBloc _bloc;
-      @override
-      void initState() {
-        _bloc = ProfileImageBloc(Uninitialized());
-        super.initState();
-      }
 
-      @override
-      void dispose() {
-        _bloc.close();
-        super.dispose();
-      }
+  late ProfileImageBloc _bloc;
+  @override
+  void initState() {
+    _bloc = ProfileImageBloc(Uninitialized());
+    super.initState();
+  }
 
-    double _size = 50.0;
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
+  }
+
+  double _size = 50.0;
   bool _large = false;
 
   @override
   Widget build(BuildContext context) {
-  
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -114,13 +113,10 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
         // horizontal).
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
- 
-
-      
           BlocBuilder(
-            bloc: _bloc ,
-            builder: (context, state){
-              if(state is Chosen)
+            bloc: _bloc,
+            builder: (context, state) {
+              if (state is Chosen)
                 return Container(
                   width: 150,
                   height: 150,
@@ -133,11 +129,11 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                           ),
                   ),
                 );
-                return Container(
-                  width: 150,
-                  height: 150,
-                  color: Colors.indigo,
-                ); 
+              return Container(
+                width: 150,
+                height: 150,
+                color: Colors.indigo,
+              );
             },
           ),
           //  BlocBuilder(
@@ -149,22 +145,20 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           //   },
           // ),
 
-
-        // Anims
-            // GestureDetector(
-            //   onTap: () => _updateSize(),
-            //   child: Container(
-            //     color: Colors.amberAccent,
-            //     child: AnimatedSize(
-            //       curve: Curves.easeIn,
-            //       vsync: this,
-            //       duration: const Duration(seconds: 1),
-            //       child: FlutterLogo(size: _size),
-            //     ),
-            //   ),
-            // ),
-            // SizedBox(height: 20,),
-
+          // Anims
+          // GestureDetector(
+          //   onTap: () => _updateSize(),
+          //   child: Container(
+          //     color: Colors.amberAccent,
+          //     child: AnimatedSize(
+          //       curve: Curves.easeIn,
+          //       vsync: this,
+          //       duration: const Duration(seconds: 1),
+          //       child: FlutterLogo(size: _size),
+          //     ),
+          //   ),
+          // ),
+          // SizedBox(height: 20,),
 
           Container(
             height: 300,
@@ -204,16 +198,16 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
             ),
           ),
 
-      //     SizedBox(
-      //       height: 40,
-      //     ),
-      //     // Text(
-      //     //   'You have pushed the button this many times:',
-      //     // ),
-      //     // Text(
-      //     //   '$_counter',
-      //     //   style: Theme.of(context).textTheme.headline4,
-      //     // ),
+          //     SizedBox(
+          //       height: 40,
+          //     ),
+          //     // Text(
+          //     //   'You have pushed the button this many times:',
+          //     // ),
+          //     // Text(
+          //     //   '$_counter',
+          //     //   style: Theme.of(context).textTheme.headline4,
+          //     // ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -228,34 +222,14 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   }
 
 
-//TODO: Modal bottom sheet
   showMySheet(BuildContext context) {
-    
     showModalBottomSheet(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(25)
-          ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
         ),
-        // showBottomSheet(
         context: context,
-        builder: (context) =>  
-            MenuView() 
-        //buttonSheetCustom(context)
-        // gridViewFuture(context)
-
-        );
+        builder: (context) => PhotoChoise());
   }
-
-
-
-
-
-
-
-
-
-
 
   Widget getViewListNamePath(List<AssetPathEntity> data) {
     return ListView.separated(
@@ -294,19 +268,10 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     );
   }
 
-
-
   void _updateSize() {
     setState(() {
       _size = _large ? 250.0 : 100.0;
       _large = !_large;
     });
   }
-
-
-
-
-
-
-
 }

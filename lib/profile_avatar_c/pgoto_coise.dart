@@ -11,14 +11,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-class MenuView extends StatefulWidget {
-  MenuView({Key? key}) : super(key: key);
+typedef MyCallback = String Function(Object?);
+
+class PhotoChoise extends StatefulWidget {
+  PhotoChoise({Key? key}) : super(key: key);
 
   @override
-  _MenuViewState createState() => _MenuViewState();
+  _PhotoChoiseState createState() => _PhotoChoiseState();
 }
 
-class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
+class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin {
   late ProfileImageBloc _bloc;
 
   @override
@@ -370,6 +372,17 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
     );
   }
 
+
+
+
+
+
+
+
+
+
+
+
   Widget gridViewFuture(BuildContext context, int choise) {
     return FutureBuilder<List<AssetEntity>?>(
         future: loadAssetList(0),
@@ -427,16 +440,21 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
           bloc: _bloc,
           builder: (context, state) {
             // TODO: при выборе не убирается отметка
+            
+               
 
             if (state is Chosen) {
               if (state.index != null) {
                 return getItemGrid(data[index], index, context,
-                    state.index == index ? true : false);
+                    state.index == index ? true : false, state );
               } else {
-                return getItemGrid(data[index], index, context, false);
+                return getItemGrid(data[index], index, context, false, state);
               }
             }
-            return getItemGrid(data[index], index, context, false);
+
+            return getItemGrid(data[index], index, context, false, state);
+
+
           }),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
@@ -451,7 +469,7 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
   Uint8List? _dataChoise = null;
 
   Widget getItemGrid(
-      AssetEntity data, int index, BuildContext context, bool choiseB) {
+      AssetEntity data, int index, BuildContext context, bool choiseB, Object? ste ) {
         //TODO: favorit
         // data.isFavorite = true;
         
@@ -466,11 +484,13 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
         //   },
         //   child:
         //TODO: не изменяется размер
-        BlocBuilder(
-            bloc: _bloc,
-            builder: (context, state) {
+        // BlocBuilder(
+        //     bloc: _bloc,
+        //     builder: (context, state) {
               
-              return AnimatedSize(
+        //       return 
+              
+              AnimatedSize(
                 vsync: this,
                 //MyAnimatedSizeWidget(
                 duration: const Duration(seconds: 1),
@@ -479,18 +499,24 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
                     builder: (context, AsyncSnapshot<Uint8List?> assyn) {
                       return GestureDetector(
                         onTap: () async {
-                          // Uint8List? byte = await getImg(data);
-                          // choiseSet(data2!, index);
-                          if(state is Chosen){
-                            if(state.index == index){
-                                _bloc.add(GridElementChooseNO());
-                            }
-                          } else if( state is ChooseNo){
-                                _bloc.add(GridElementChoose(index, assyn.data!)); 
-                          }
+                          
                           
 
-                          // _bloc.choiseElement( index);
+                          if(ste is Chosen){
+                            if(ste.index == index){
+                                _bloc.add(GridElementChooseNO());
+                                // data.isFavorite = !data.isFavorite ;
+                            }
+                          } else if( ste is ChooseNo){
+                                _bloc.add(GridElementChoose(index, assyn.data!)); 
+                                // data.isFavorite = !data.isFavorite ;
+                          }
+                          
+                          //TODO: 
+                          // data.isFavorite = !data.isFavorite ;
+                          //  data.isFavorite = !data.isFavorite ;
+
+                      
                         },
                         child: Container(
                           width:  100,
@@ -528,7 +554,7 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
                                     height: 30,
                                     child: IconButton(
                                       onPressed: () {},
-                                      icon: choiseB
+                                      icon: choiseB 
                                           ? Icon(
                                               Icons.check_circle,
                                               color: Colors.blue,
@@ -548,7 +574,7 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
                       );
                     }),
               );
-            });
+            // });
 
     // );
   }

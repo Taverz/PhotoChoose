@@ -38,12 +38,12 @@ dependencies:
   extended_image: ^4.1.0
   
   image_editor:  ^1.0.0 
-  image_crop: ^0.4.0
+  # image_crop: ^0.4.0
 
-  wechat_assets_picker: ^6.0.5
+  # wechat_assets_picker: ^6.0.5
 
-  image:
-  vm_service:
+  # image:
+  # vm_service:
 
 dev_dependencies:
   flutter_test:
