@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:dsf/block/profileimage_block.dart';
 import 'package:dsf/block/profileimage_event.dart';
 import 'package:dsf/block/profileimage_state.dart';
+import 'package:dsf/profile_avatar_c/page_editor_image.dart';
 
 import 'package:dsf/profile_avatar_c/sfer.dart';
 import 'package:flutter/material.dart';
@@ -124,45 +125,58 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
                       SizedBox(
                         height: 10,
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          // _bloc.add();
-                          //  Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (context) =>
-                          //       //TODO: как получить изображение
-                          //        PageEditorImage(image: ,)
-                          //     ),
-                          //   );
-                        },
-                        child: Container(
-                          // alignment: Alignment.bottomCenter,
-                          // padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                          color: Colors.white,
-                          child: Center(
-                            child: Container(
-                              height: 50,
-                              width: MediaQuery.of(context).size.width < 800
-                                  ? MediaQuery.of(context).size.width
-                                  : 800,
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8.0)),
-                                  //TODO: HEX color
-                                  color: false
-                                      ? Color(0xff536EFC)
-                                      : Color(0xff949FDA)),
-                              child: Center(
-                                child: Text(
-                                  "Далее",
-                                  style: TextStyle(
-                                      fontSize: 24, color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                      BlocBuilder(
+                        bloc: _bloc,
+                        builder: (context, state){
+                         // child: 
+                        if(state is Chosen){
+                          return
+                          buttonA(context, true, image: state.imageBytes );
+                        } 
+                        return buttonA(context, false);
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     if(state is Chosen){
+                        //       Navigator.push(
+                        //         context,
+                        //         MaterialPageRoute(
+                        //           builder: (context) =>
+                                
+                        //            PageEditorImage(image:state.imageBytes ,)
+                        //         ),
+                        //       ); 
+                        //     }
+                            
+                        //   },
+                        //   child: Container(
+                        //     // alignment: Alignment.bottomCenter,
+                        //     // padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                        //     color: Colors.white,
+                        //     child: Center(
+                        //       child: Container(
+                        //         height: 50,
+                        //         width: MediaQuery.of(context).size.width < 800
+                        //             ? MediaQuery.of(context).size.width
+                        //             : 800,
+                        //         decoration: BoxDecoration(
+                        //             borderRadius:
+                        //                 BorderRadius.all(Radius.circular(8.0)),
+                        //             //TODO: HEX color
+                        //             color: false
+                        //                 ? Color(0xff536EFC)
+                        //                 : Color(0xff949FDA)),
+                        //         child: Center(
+                        //           child: Text(
+                        //             "Далее",
+                        //             style: TextStyle(
+                        //                 fontSize: 24, color: Colors.white),
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // );
+                        }
                       ),
                     ],
                   ),
@@ -184,6 +198,58 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  Widget buttonA(BuildContext context, bool click, {Uint8List? image} ){
+           return     
+            GestureDetector(
+                onTap: () {
+                  if(click == true){
+                    //  if(state is Chosen){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                        // ImageEditorDemo(),
+                         PageEditorImage(image:image! ,)
+                      ),
+                    ); 
+                  // }
+                  }else{
+                    //показать toast
+                  }
+
+                 
+                  
+                },
+                child: Container(
+                  // alignment: Alignment.bottomCenter,
+                  // padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                  color: Colors.white,
+                  child: Center(
+                    child: Container(
+                      height: 50,
+                      width: MediaQuery.of(context).size.width < 800
+                          ? MediaQuery.of(context).size.width
+                          : 800,
+                      decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(8.0)),
+                          //TODO: HEX color
+                          color: click
+                              ? Color(0xff536EFC)
+                              : Color(0xff949FDA)),
+                      child: Center(
+                        child: Text(
+                          "Далее",
+                          style: TextStyle(
+                              fontSize: 24, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
   }
 
   //TODO:
