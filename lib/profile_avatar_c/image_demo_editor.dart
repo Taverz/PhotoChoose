@@ -5,6 +5,7 @@ import 'dart:ui';
 // import 'package:example/common/image_picker/image_picker.dart';
 // import 'package:example/common/utils/crop_editor_helper.dart';
 // import 'package:example/common/widget/common_widget.dart';
+import 'package:dsf/profile_avatar_c/hard.dart';
 import 'package:extended_image/extended_image.dart';
 // import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,12 +17,12 @@ import 'package:flutter/material.dart';
 
 
 
-import 'dart:async';
+// import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
+// import 'dart:typed_data';
 
 //import 'package:image_picker/image_picker.dart' as picker;
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:photo_manager/photo_manager.dart';
 // import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
@@ -31,26 +32,203 @@ import 'package:photo_manager/photo_manager.dart';
 
 
 //import 'dart:typed_data';
-import 'dart:isolate';
-import 'dart:typed_data';
-import 'dart:ui';
-import 'package:flutter/foundation.dart';
+// import 'dart:isolate';
+// import 'dart:typed_data';
+// import 'dart:ui';
+// import 'package:flutter/foundation.dart';
 
 // ignore: implementation_imports
-import 'package:http/src/response.dart';
-import 'package:http_client_helper/http_client_helper.dart';
+// import 'package:http/src/response.dart';
+// import 'package:http_client_helper/http_client_helper.dart';
 
 // import 'package:isolate/load_balancer.dart';
 // import 'package:isolate/isolate_runner.dart';
-import 'package:extended_image/extended_image.dart';
+// import 'package:extended_image/extended_image.dart';
 // import 'package:image/image.dart';
 // import 'package:image_editor/image_editor.dart';
+
+class AspectRatioItem {
+  AspectRatioItem({this.value, this.text});
+  final String? text;
+  final double? value;
+}
+
+class AspectRatioWidget extends StatelessWidget {
+  const AspectRatioWidget(
+      {this.aspectRatioS, this.aspectRatio, this.isSelected = false});
+  final String? aspectRatioS;
+  final double? aspectRatio;
+  final bool isSelected;
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: const Size(100, 100),
+      painter: AspectRatioPainter(
+          aspectRatio: aspectRatio,
+          aspectRatioS: aspectRatioS,
+          isSelected: isSelected),
+    );
+  }
+}
+
+
+class AspectRatioPainter extends CustomPainter {
+  AspectRatioPainter(
+      {this.aspectRatioS, this.aspectRatio, this.isSelected = false});
+  final String? aspectRatioS;
+  final double? aspectRatio;
+  final bool isSelected;
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Color color = isSelected ? Colors.blue : Colors.grey;
+    final Rect rect = Offset.zero & size;
+    //https://github.com/flutter/flutter/issues/49328
+    final Paint paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+    final double aspectRatioResult =
+        (aspectRatio != null && aspectRatio! > 0.0) ? aspectRatio! : 1.0;
+    canvas.drawRect(
+        getDestinationRect(
+            rect: const EdgeInsets.all(10.0).deflateRect(rect),
+            inputSize: Size(aspectRatioResult * 100, 100.0),
+            fit: BoxFit.contain),
+        paint);
+
+    final TextPainter textPainter = TextPainter(
+        text: TextSpan(
+            text: aspectRatioS,
+            style: TextStyle(
+              color:
+                  color.computeLuminance() < 0.5 ? Colors.white : Colors.black,
+              fontSize: 16.0,
+            )),
+        textDirection: TextDirection.ltr,
+        maxLines: 1);
+    textPainter.layout(maxWidth: rect.width);
+
+    textPainter.paint(
+        canvas,
+        rect.center -
+            Offset(textPainter.width / 2.0, textPainter.height / 2.0));
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return oldDelegate is AspectRatioPainter &&
+        (oldDelegate.isSelected != isSelected ||
+            oldDelegate.aspectRatioS != aspectRatioS ||
+            oldDelegate.aspectRatio != aspectRatio);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+class SimpleImageEditor extends StatefulWidget {
+  Uint8List imageS;
+  SimpleImageEditor(this.imageS);
+
+  @override
+  _SimpleImageEditorState createState() => _SimpleImageEditorState();
+}
+
+class _SimpleImageEditorState extends State<SimpleImageEditor> {
+  final GlobalKey<ExtendedImageEditorState> editorKey =
+      GlobalKey<ExtendedImageEditorState>();
+  bool _cropping = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ImageEditor'),
+      ),
+      body: ExtendedImage.memory(
+        widget.imageS,
+        fit: BoxFit.contain,
+        mode: ExtendedImageMode.editor,
+        enableLoadState: true,
+        extendedImageEditorKey: editorKey,
+        cacheRawData: true,
+        initEditorConfigHandler: (ExtendedImageState? state) {
+          return EditorConfig(
+              maxScale: 8.0,
+              cropRectPadding: const EdgeInsets.all(20.0),
+              hitTestSize: 20.0,
+              initCropRectType: InitCropRectType.imageRect,
+              cropAspectRatio: CropAspectRatios.ratio4_3,
+              editActionDetailsIsChanged: (EditActionDetails? details) {
+                print(details?.totalScale);
+              });
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.crop),
+          onPressed: () {
+            cropImage();
+          }),
+    );
+  }
+
+  Future<void> cropImage() async {
+    if (_cropping) {
+      return;
+    }
+    final Uint8List fileData = Uint8List.fromList(
+      // kIsWeb
+
+        // ? (await cropImageDataWithDartLibrary(state: editorKey.currentState!))!
+        // : 
+        
+        (
+          await cropImageDataWithNativeLibraryM(
+            state: editorKey.currentState!)
+            )!
+            
+            );
+
+     showDialog(context: context, builder: (BuildContext context){
+        return  Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    image: fileData == null
+                        ? null
+                        : DecorationImage(
+                            fit: BoxFit.cover,
+                            image: MemoryImage(fileData),
+                          ),
+                  ),
+                );
+      });        
+
+    // final String? fileFath =
+    //     await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
+
+    // showToast('save image : $fileFath');
+    _cropping = false;
+  }
+}
+
+
+
+
+
+
+
 
 
 
 class ImageEditorDemo extends StatefulWidget {
-  Uint8List image;
-  ImageEditorDemo(this.image);
+  Uint8List imageW;
+  ImageEditorDemo(this.imageW);
 
   @override
   _ImageEditorDemoState createState() => _ImageEditorDemoState();
@@ -74,9 +252,10 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   bool _cropping = false;
 
   EditorCropLayerPainter? _cropLayerPainter;
-
+Uint8List? _memoryImage;
   @override
   void initState() {
+    _memoryImage = widget.imageW;
     _aspectRatio = _aspectRatios.first;
     _cropLayerPainter = const EditorCropLayerPainter();
     super.initState();
@@ -95,11 +274,13 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
           IconButton(
             icon: const Icon(Icons.done),
             onPressed: () {
-              if (kIsWeb) {
-                _cropImage(false);
-              } else {
-                _showCropDialog(context);
-              }
+              // if (kIsWeb) {
+
+                _cropImage(true,context);
+              // } 
+              // else {
+              //   _showCropDialog(context);
+              // }
             },
           ),
         ],
@@ -125,24 +306,26 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                   },
                   cacheRawData: true,
                 )
-              : ExtendedImage.asset(
-                  'assets/image.jpg',
-                  fit: BoxFit.contain,
-                  mode: ExtendedImageMode.editor,
-                  enableLoadState: true,
-                  extendedImageEditorKey: editorKey,
-                  initEditorConfigHandler: (ExtendedImageState? state) {
-                    return EditorConfig(
-                      maxScale: 8.0,
-                      cropRectPadding: const EdgeInsets.all(20.0),
-                      hitTestSize: 20.0,
-                      cropLayerPainter: _cropLayerPainter!,
-                      initCropRectType: InitCropRectType.imageRect,
-                      cropAspectRatio: _aspectRatio!.value,
-                    );
-                  },
-                  cacheRawData: true,
-                ),
+                :Center(child: Text("Error editor"),)
+              // : 
+              // ExtendedImage.asset(
+              //     'assets/image.jpg',
+              //     fit: BoxFit.contain,
+              //     mode: ExtendedImageMode.editor,
+              //     enableLoadState: true,
+              //     extendedImageEditorKey: editorKey,
+              //     initEditorConfigHandler: (ExtendedImageState? state) {
+              //       return EditorConfig(
+              //         maxScale: 8.0,
+              //         cropRectPadding: const EdgeInsets.all(20.0),
+              //         hitTestSize: 20.0,
+              //         cropLayerPainter: _cropLayerPainter!,
+              //         initCropRectType: InitCropRectType.imageRect,
+              //         cropAspectRatio: _aspectRatio!.value,
+              //       );
+              //     },
+              //     cacheRawData: true,
+              //   ),
         ),
       ]),
       bottomNavigationBar: BottomAppBar(
@@ -155,13 +338,13 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              FlatButtonWithIcon(
+              IconButton(
                 icon: const Icon(Icons.crop),
-                label: const Text(
-                  'Crop',
-                  style: TextStyle(fontSize: 10.0),
-                ),
-                textColor: Colors.white,
+                // label: const Text(
+                //   'Crop',
+                //   style: TextStyle(fontSize: 10.0),
+                // ),
+                // textColor: Colors.white,
                 onPressed: () {
                   showDialog<void>(
                       context: context,
@@ -202,124 +385,124 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       });
                 },
               ),
-              FlatButtonWithIcon(
+              IconButton(
                 icon: const Icon(Icons.flip),
-                label: const Text(
-                  'Flip',
-                  style: TextStyle(fontSize: 10.0),
-                ),
-                textColor: Colors.white,
+                // label: const Text(
+                //   'Flip',
+                //   style: TextStyle(fontSize: 10.0),
+                // ),
+                // textColor: Colors.white,
                 onPressed: () {
                   editorKey.currentState!.flip();
                 },
               ),
-              FlatButtonWithIcon(
+              IconButton(
                 icon: const Icon(Icons.rotate_left),
-                label: const Text(
-                  'Rotate Left',
-                  style: TextStyle(fontSize: 8.0),
-                ),
-                textColor: Colors.white,
+                // label: const Text(
+                //   'Rotate Left',
+                //   style: TextStyle(fontSize: 8.0),
+                // ),
+                // textColor: Colors.white,
                 onPressed: () {
                   editorKey.currentState!.rotate(right: false);
                 },
               ),
-              FlatButtonWithIcon(
+              IconButton(
                 icon: const Icon(Icons.rotate_right),
-                label: const Text(
-                  'Rotate Right',
-                  style: TextStyle(fontSize: 8.0),
-                ),
-                textColor: Colors.white,
+                // label: const Text(
+                //   'Rotate Right',
+                //   style: TextStyle(fontSize: 8.0),
+                // ),
+                // textColor: Colors.white,
                 onPressed: () {
                   editorKey.currentState!.rotate(right: true);
                 },
               ),
-              FlatButtonWithIcon(
-                icon: const Icon(Icons.rounded_corner_sharp),
-                label: PopupMenuButton<EditorCropLayerPainter>(
-                  key: popupMenuKey,
-                  enabled: false,
-                  offset: const Offset(100, -300),
-                  child: const Text(
-                    'Painter',
-                    style: TextStyle(fontSize: 8.0),
-                  ),
-                  initialValue: _cropLayerPainter,
-                  itemBuilder: (BuildContext context) {
-                    return <PopupMenuEntry<EditorCropLayerPainter>>[
-                      PopupMenuItem<EditorCropLayerPainter>(
-                        child: Row(
-                          children: const <Widget>[
-                            Icon(
-                              Icons.rounded_corner_sharp,
-                              color: Colors.blue,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text('Default'),
-                          ],
-                        ),
-                        value: const EditorCropLayerPainter(),
-                      ),
-                      const PopupMenuDivider(),
-                      PopupMenuItem<EditorCropLayerPainter>(
-                        child: Row(
-                          children: const <Widget>[
-                            Icon(
-                              Icons.circle,
-                              color: Colors.blue,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text('Custom'),
-                          ],
-                        ),
-                        value: const CustomEditorCropLayerPainter(),
-                      ),
-                      const PopupMenuDivider(),
-                      PopupMenuItem<EditorCropLayerPainter>(
-                        child: Row(
-                          children: const <Widget>[
-                            Icon(
-                              CupertinoIcons.circle,
-                              color: Colors.blue,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text('Circle'),
-                          ],
-                        ),
-                        value: const CircleEditorCropLayerPainter(),
-                      ),
-                    ];
-                  },
-                  onSelected: (EditorCropLayerPainter value) {
-                    if (_cropLayerPainter != value) {
-                      setState(() {
-                        if (value is CircleEditorCropLayerPainter) {
-                          _aspectRatio = _aspectRatios[2];
-                        }
-                        _cropLayerPainter = value;
-                      });
-                    }
-                  },
-                ),
-                textColor: Colors.white,
-                onPressed: () {
-                  popupMenuKey.currentState!.showButtonMenu();
-                },
-              ),
-              FlatButtonWithIcon(
+              // FlatButtonWithIcon(
+              //   icon: const Icon(Icons.rounded_corner_sharp),
+              //   label: PopupMenuButton<EditorCropLayerPainter>(
+              //     key: popupMenuKey,
+              //     enabled: false,
+              //     offset: const Offset(100, -300),
+              //     child: const Text(
+              //       'Painter',
+              //       style: TextStyle(fontSize: 8.0),
+              //     ),
+              //     initialValue: _cropLayerPainter,
+              //     itemBuilder: (BuildContext context) {
+              //       return <PopupMenuEntry<EditorCropLayerPainter>>[
+              //         PopupMenuItem<EditorCropLayerPainter>(
+              //           child: Row(
+              //             children: const <Widget>[
+              //               Icon(
+              //                 Icons.rounded_corner_sharp,
+              //                 color: Colors.blue,
+              //               ),
+              //               SizedBox(
+              //                 width: 5,
+              //               ),
+              //               Text('Default'),
+              //             ],
+              //           ),
+              //           value: const EditorCropLayerPainter(),
+              //         ),
+              //         const PopupMenuDivider(),
+              //         PopupMenuItem<EditorCropLayerPainter>(
+              //           child: Row(
+              //             children: const <Widget>[
+              //               Icon(
+              //                 Icons.circle,
+              //                 color: Colors.blue,
+              //               ),
+              //               SizedBox(
+              //                 width: 5,
+              //               ),
+              //               Text('Custom'),
+              //             ],
+              //           ),
+              //           value: const CustomEditorCropLayerPainter(),
+              //         ),
+              //         const PopupMenuDivider(),
+              //         PopupMenuItem<EditorCropLayerPainter>(
+              //           child: Row(
+              //             children: const <Widget>[
+              //               Icon(
+              //                 CupertinoIcons.circle,
+              //                 color: Colors.blue,
+              //               ),
+              //               SizedBox(
+              //                 width: 5,
+              //               ),
+              //               Text('Circle'),
+              //             ],
+              //           ),
+              //           value: const CircleEditorCropLayerPainter(),
+              //         ),
+              //       ];
+              //     },
+              //     onSelected: (EditorCropLayerPainter value) {
+              //       if (_cropLayerPainter != value) {
+              //         setState(() {
+              //           if (value is CircleEditorCropLayerPainter) {
+              //             _aspectRatio = _aspectRatios[2];
+              //           }
+              //           _cropLayerPainter = value;
+              //         });
+              //       }
+              //     },
+              //   ),
+              //   textColor: Colors.white,
+              //   onPressed: () {
+              //     popupMenuKey.currentState!.showButtonMenu();
+              //   },
+              // ),
+              IconButton(
                 icon: const Icon(Icons.restore),
-                label: const Text(
-                  'Reset',
-                  style: TextStyle(fontSize: 10.0),
-                ),
-                textColor: Colors.white,
+                // label: const Text(
+                //   'Reset',
+                //   style: TextStyle(fontSize: 10.0),
+                // ),
+                // textColor: Colors.white,
                 onPressed: () {
                   editorKey.currentState!.reset();
                 },
@@ -331,123 +514,123 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     );
   }
 
-  void _showCropDialog(BuildContext context) {
-    showDialog<void>(
-        context: context,
-        builder: (BuildContext content) {
-          return Column(
-            children: <Widget>[
-              Expanded(
-                child: Container(),
-              ),
-              Container(
-                  margin: const EdgeInsets.all(20.0),
-                  child: Material(
-                      child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const Text(
-                          'select library to crop',
-                          style: TextStyle(
-                              fontSize: 24.0, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 20.0,
-                        ),
-                        Text.rich(TextSpan(children: <TextSpan>[
-                          TextSpan(
-                            children: <TextSpan>[
-                              TextSpan(
-                                  text: 'Image',
-                                  style: const TextStyle(
-                                      color: Colors.blue,
-                                      decorationStyle:
-                                          TextDecorationStyle.solid,
-                                      decorationColor: Colors.blue,
-                                      decoration: TextDecoration.underline),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      // launch(
-                                      //     'https://github.com/brendan-duncan/image');
-                                    }),
-                              const TextSpan(
-                                  text:
-                                      '(Dart library) for decoding/encoding image formats, and image processing. It\'s stable.')
-                            ],
-                          ),
-                          const TextSpan(text: '\n\n'),
-                          TextSpan(
-                            children: <TextSpan>[
-                              TextSpan(
-                                  text: 'ImageEditor',
-                                  style: const TextStyle(
-                                      color: Colors.blue,
-                                      decorationStyle:
-                                          TextDecorationStyle.solid,
-                                      decorationColor: Colors.blue,
-                                      decoration: TextDecoration.underline),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      // launch(
-                                      //     'https://github.com/fluttercandies/flutter_image_editor');
-                                    }
-                                    ),
-                              const TextSpan(
-                                  text:
-                                      '(Native library) support android/ios, crop flip rotate. It\'s faster.')
-                            ],
-                          )
-                        ])),
-                        const SizedBox(
-                          height: 20.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: <Widget>[
-                            OutlinedButton(
-                              child: const Text(
-                                'Dart',
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                _cropImage(false);
-                              },
-                            ),
-                            OutlinedButton(
-                              child: const Text(
-                                'Native',
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                _cropImage(true);
-                              },
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ))),
-              Expanded(
-                child: Container(),
-              )
-            ],
-          );
-        });
-  }
+  // void _showCropDialog(BuildContext context) {
+  //   showDialog<void>(
+  //       context: context,
+  //       builder: (BuildContext content) {
+  //         return Column(
+  //           children: <Widget>[
+  //             Expanded(
+  //               child: Container(),
+  //             ),
+  //             Container(
+  //                 margin: const EdgeInsets.all(20.0),
+  //                 child: Material(
+  //                     child: Padding(
+  //                   padding: const EdgeInsets.all(15.0),
+  //                   child: Column(
+  //                     mainAxisAlignment: MainAxisAlignment.start,
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: <Widget>[
+  //                       const Text(
+  //                         'select library to crop',
+  //                         style: TextStyle(
+  //                             fontSize: 24.0, fontWeight: FontWeight.bold),
+  //                       ),
+  //                       const SizedBox(
+  //                         height: 20.0,
+  //                       ),
+  //                       Text.rich(TextSpan(children: <TextSpan>[
+  //                         TextSpan(
+  //                           children: <TextSpan>[
+  //                             TextSpan(
+  //                                 text: 'Image',
+  //                                 style: const TextStyle(
+  //                                     color: Colors.blue,
+  //                                     decorationStyle:
+  //                                         TextDecorationStyle.solid,
+  //                                     decorationColor: Colors.blue,
+  //                                     decoration: TextDecoration.underline),
+  //                                 recognizer: TapGestureRecognizer()
+  //                                   ..onTap = () {
+  //                                     // launch(
+  //                                     //     'https://github.com/brendan-duncan/image');
+  //                                   }),
+  //                             const TextSpan(
+  //                                 text:
+  //                                     '(Dart library) for decoding/encoding image formats, and image processing. It\'s stable.')
+  //                           ],
+  //                         ),
+  //                         const TextSpan(text: '\n\n'),
+  //                         TextSpan(
+  //                           children: <TextSpan>[
+  //                             TextSpan(
+  //                                 text: 'ImageEditor',
+  //                                 style: const TextStyle(
+  //                                     color: Colors.blue,
+  //                                     decorationStyle:
+  //                                         TextDecorationStyle.solid,
+  //                                     decorationColor: Colors.blue,
+  //                                     decoration: TextDecoration.underline),
+  //                                 recognizer: TapGestureRecognizer()
+  //                                   ..onTap = () {
+  //                                     // launch(
+  //                                     //     'https://github.com/fluttercandies/flutter_image_editor');
+  //                                   }
+  //                                   ),
+  //                             const TextSpan(
+  //                                 text:
+  //                                     '(Native library) support android/ios, crop flip rotate. It\'s faster.')
+  //                           ],
+  //                         )
+  //                       ])),
+  //                       const SizedBox(
+  //                         height: 20.0,
+  //                       ),
+  //                       Row(
+  //                         mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //                         children: <Widget>[
+  //                           OutlinedButton(
+  //                             child: const Text(
+  //                               'Dart',
+  //                               style: TextStyle(
+  //                                 color: Colors.blue,
+  //                               ),
+  //                             ),
+  //                             onPressed: () {
+  //                               Navigator.of(context).pop();
+  //                               _cropImage(false, context);
+  //                             },
+  //                           ),
+  //                           OutlinedButton(
+  //                             child: const Text(
+  //                               'Native',
+  //                               style: TextStyle(
+  //                                 color: Colors.blue,
+  //                               ),
+  //                             ),
+  //                             onPressed: () {
+  //                               Navigator.of(context).pop();
+  //                               _cropImage(true, context);
+  //                             },
+  //                           ),
+  //                         ],
+  //                       )
+  //                     ],
+  //                   ),
+  //                 ))),
+  //             Expanded(
+  //               child: Container(),
+  //             )
+  //           ],
+  //         );
+  //       });
+  // }
 
-  Future<void> _cropImage(bool useNative) async {
-    if (_cropping) {
-      return;
-    }
+  Future<void> _cropImage(bool useNative, context) async {
+    // if (_cropping) {
+    //   return;
+    // }
     String msg = '';
     try {
       _cropping = true;
@@ -458,8 +641,23 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
       /// native library
       // if (useNative) {
-        fileData = await cropImageDataWithNativeLibrary(
+        fileData = await cropImageDataWithNativeLibraryM(
             state: editorKey.currentState!);
+
+      showDialog(context: context, builder: (BuildContext context){
+        return  Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    image: fileData == null
+                        ? null
+                        : DecorationImage(
+                            fit: BoxFit.cover,
+                            image: MemoryImage(fileData),
+                          ),
+                  ),
+                );
+      });        
       // } 
       // else {
       //   ///delay due to cropImageDataWithDartLibrary is time consuming on main thread
@@ -486,16 +684,26 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     _cropping = false;
   }
 
-  Uint8List? _memoryImage;
+
+
+
+
+
+  // Uint8List? _memoryImage;
   Future<void> _getImage() async {
-    _memoryImage = await pickImage(context);
+    // _memoryImage = await pickImage(context);
     //when back to current page, may be editorKey.currentState is not ready.
-    Future<void>.delayed(const Duration(milliseconds: 200), () {
-      setState(() {
-        editorKey.currentState!.reset();
-      });
-    });
+    // Future<void>.delayed(const Duration(milliseconds: 200), () {
+    //   setState(() {
+    //     editorKey.currentState!.reset();
+    //   });
+    // });
   }
+
+
+
+
+
 }
 
 class CustomEditorCropLayerPainter extends EditorCropLayerPainter {
@@ -570,21 +778,23 @@ class CircleEditorCropLayerPainter extends EditorCropLayerPainter {
 
 Future<Uint8List?> pickImage(BuildContext context) async {
   List<AssetEntity> assets = <AssetEntity>[];
-  final List<AssetEntity>? result = await AssetPicker.pickAssets(
-    context,
-    maxAssets: 1,
-    pathThumbSize: 84,
-    gridCount: 3,
-    pageSize: 300,
-    selectedAssets: assets,
-    requestType: RequestType.image,
-    // textDelegate: EnglishTextDelegate(),
-  );
-  if (result != null) {
-    assets = List<AssetEntity>.from(result);
-    return assets.first.originBytes;
-  }
   return null;
+  // final List<AssetEntity>? result = 
+  //   await AssetPicker.pickAssets(
+  //     context,
+  //     maxAssets: 1,
+  //     pathThumbSize: 84,
+  //     gridCount: 3,
+  //     pageSize: 300,
+  //     selectedAssets: assets,
+  //     requestType: RequestType.image,
+  //   // textDelegate: EnglishTextDelegate(),
+  // );
+  // if (result != null) {
+  //   assets = List<AssetEntity>.from(result);
+  //   return assets.first.originBytes;
+  // }
+  // return null;
   // final File file =
 
   //     await picker.ImagePicker.pickImage(source: picker.ImageSource.gallery);
@@ -671,7 +881,7 @@ class ImageSaver {
 
 
 
-Future<Uint8List?> cropImageDataWithNativeLibrary(
+Future<Uint8List?> cropImageDataWithNativeLibraryM(
     {required ExtendedImageEditorState state}) async {
   print('native library start cropping');
 
@@ -685,26 +895,60 @@ Future<Uint8List?> cropImageDataWithNativeLibrary(
 
   final ImageEditorOption option = ImageEditorOption();
 
-  if (action.needCrop) {
-    option.addOption(ClipOption.fromRect(cropRect!));
-  }
-
-  if (action.needFlip) {
+  // if (action.needCrop) {
     option.addOption(
-        FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
-  }
+  ClipOption.fromRect(cropRect!)
+  );
+  // }
+
+  // if (action.needFlip) {
+  //   option.addOption(
+  //       FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
+  // }
 
   if (action.hasRotateAngle) {
     option.addOption(RotateOption(rotateAngle));
   }
 
   final DateTime start = DateTime.now();
-  final Uint8List? result = await ImageEditor.editImage(
-    image: img,
-    imageEditorOption: option,
-  );
+  Uint8List? result = img;
+    result = await editImage(
+                image: img,
+                imageEditorOption: option,
+            );
+  // await ImageEditor.editImage(
+  //   image: img,
+  //   imageEditorOption: option,
+  // );
 
   print('${DateTime.now().difference(start)} ：total time');
   return result;
 }
+
+
+  // Future<Uint8List?> editImage({
+  //   required Uint8List image,
+  //   required ImageEditorOption imageEditorOption,
+  // }) async {
+  //   Uint8List? tmp = image;
+  //   for (final group in imageEditorOption.groupList) {
+  //     if (group.canIgnore) {
+  //       continue;
+  //     }
+  //     final handler = ImageHandler.memory(tmp);
+  //     final editOption = ImageEditorOption();
+  //     for (final option in group) {
+  //       editOption.addOption(option);
+  //     }
+  //     editOption.outputFormat = imageEditorOption.outputFormat;
+
+  //     tmp = await handler.handleAndGetUint8List(editOption);
+  //   }
+
+  //   return tmp;
+  // }
+
+
+
+
 

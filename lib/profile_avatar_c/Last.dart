@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:dsf/block/profileimage_block.dart';
 import 'package:dsf/block/profileimage_event.dart';
 import 'package:dsf/block/profileimage_state.dart';
+import 'package:dsf/profile_avatar_c/image_demo_editor.dart';
 import 'package:dsf/profile_avatar_c/page_editor_image.dart';
 
 import 'package:dsf/profile_avatar_c/sfer.dart';
@@ -210,8 +211,9 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                        // ImageEditorDemo(),
-                         PageEditorImage(image:image! ,)
+                        SimpleImageEditor(image!),
+                        // ImageEditorDemo(image!),
+                        //  PageEditorImage(image:image! ,)
                       ),
                     ); 
                   // }
@@ -322,6 +324,7 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
   }
 
   Widget getItemListName(AssetPathEntity data) {
+    // data.name;
     return Container(
       child: Row(
         children: [
@@ -449,6 +452,9 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
 
   Widget getItemGrid(
       AssetEntity data, int index, BuildContext context, bool choiseB) {
+        //TODO: favorit
+        // data.isFavorite = true;
+        
     return
         // GestureDetector(
         //   onTap: () async {
