@@ -471,56 +471,53 @@ class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin
                                           
                         },
                         child: Container(
-                          width:  100,
-                            height:  100,
-                          child: Container(
-                            width: choiseB ? 85 : 100,
-                            height: choiseB ? 85 : 100,
-                            child: Stack(
-                              children: [
-                                //Image
-                                Positioned(
-                                    child:
-                                        // FutureBuilder<Uint8List?>(
-                                        //     future: getImg(data),
-                                        //     builder: (context, AsyncSnapshot<Uint8List?> async) =>
-                                        // GestureDetector(
-                                        //   onTap: (){
-                                        //       //Препросмотр
-                                        //   },
-                                        //   child:
-                                        getImage(assyn.data)
-                                    // )
-                                    // )
-                                    ),
-                                //Пометить что он выбран
-                                Positioned(
-                                  top: 5,
-                                  right: 5,
-                                  // child: GestureDetector(
-                                  //   onTap: (){
-                                  //       // просто выбор
-                                  //   },
-                                  child: Container(
-                                    width: 30,
-                                    height: 30,
-                                    child: IconButton(
-                                      onPressed: () {},
-                                      icon: choiseB 
-                                          ? Icon(
-                                              Icons.check_circle,
-                                              color: Colors.blue,
-                                            )
-                                          : Icon(
-                                              Icons.radio_button_unchecked,
-                                              color: Colors.white,
-                                            ),
-                                    ),
-                                  ),
+                          color: Colors.white,
+                          // width: choiseB ? 85 : 100,
+                          // height: choiseB ? 85 : 100,
+                          child: Stack(
+                            children: [
+                              //Image
+                              Positioned(
+                                  child:
+                                      // FutureBuilder<Uint8List?>(
+                                      //     future: getImg(data),
+                                      //     builder: (context, AsyncSnapshot<Uint8List?> async) =>
+                                      // GestureDetector(
+                                      //   onTap: (){
+                                      //       //Препросмотр
+                                      //   },
+                                      //   child:
+                                      getImage(assyn.data, choiseB ? 85 : 150, choiseB ? 85 : 150)
                                   // )
-                                )
-                              ],
-                            ),
+                                  // )
+                                  ),
+                              //Пометить что он выбран
+                              Positioned(
+                                top: 5,
+                                right: 5,
+                                // child: GestureDetector(
+                                //   onTap: (){
+                                //       // просто выбор
+                                //   },
+                                child: Container(
+                                  width: 30,
+                                  height: 30,
+                                  child: IconButton(
+                                    onPressed: () {},
+                                    icon: choiseB 
+                                        ? Icon(
+                                            Icons.check_circle,
+                                            color: Colors.blue,
+                                          )
+                                        : Icon(
+                                            Icons.radio_button_unchecked,
+                                            color: Colors.white,
+                                          ),
+                                  ),
+                                ),
+                                // )
+                              )
+                            ],
                           ),
                         ),
                       );
@@ -534,23 +531,25 @@ class _PhotoChoiseState extends State<PhotoChoise> with TickerProviderStateMixin
     return bytes;
   }
 
-  Widget getImage(Uint8List? bytes) {
+  Widget getImage(Uint8List? bytes, double wid, double hid) {
     // Uint8List? bytes = await data.thumbDataWithSize(30 ,30 );
 
     return
         
-      Container(
-      // width: 150,
-      // height: 150,
-      decoration: BoxDecoration(
-        image: bytes == null
-            ? null
-            : DecorationImage(
-                fit: BoxFit.cover,
-                image: MemoryImage(bytes),
-              ),
-      ),
-    );
+      Center(
+        child: Container(
+        width: wid,
+        height: hid,
+        decoration: BoxDecoration(
+          image: bytes == null
+              ? null
+              : DecorationImage(
+                  fit: BoxFit.cover,
+                  image: MemoryImage(bytes),
+                ),
+        ),
+          ),
+      );
   }
 }
 

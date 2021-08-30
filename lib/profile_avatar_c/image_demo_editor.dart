@@ -213,7 +213,7 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                        MyHomePage(title: "Title", image: fileData!),
+                        MyHomePage(title: "Title", image: fileData),
                         // ImageEditorDemo(image!),
                         //  PageEditorImage(image:image! ,)
                       ),
