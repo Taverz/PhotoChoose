@@ -5,8 +5,12 @@ import 'dart:ui';
 // import 'package:example/common/image_picker/image_picker.dart';
 // import 'package:example/common/utils/crop_editor_helper.dart';
 // import 'package:example/common/widget/common_widget.dart';
+
+
 import 'package:dsf/main.dart';
-import 'package:dsf/profile_avatar_c/hard.dart';
+
+
+import './hard.dart';
 import 'package:extended_image/extended_image.dart';
 // import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:flutter/cupertino.dart';

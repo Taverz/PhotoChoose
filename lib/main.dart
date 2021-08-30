@@ -1,9 +1,11 @@
 import 'dart:typed_data';
 
-import 'package:dsf/block/profileimage_block.dart';
-import 'package:dsf/block/profileimage_state.dart';
-import 'package:dsf/profile_avatar_c/pgoto_coise.dart';
-import 'package:dsf/profile_avatar_c/sfer.dart';
+import 'package:dsf/block_avatar_image/profileimage_block.dart';
+import 'package:dsf/block_avatar_image/profileimage_state.dart';
+import 'package:dsf/profile_avatar_image/pgoto_coise.dart';
+import 'package:dsf/profile_avatar_image/asset_processing.dart';
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_manager/photo_manager.dart';

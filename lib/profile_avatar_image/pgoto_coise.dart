@@ -1,12 +1,14 @@
 import 'dart:typed_data';
 
-import 'package:dsf/block/profileimage_block.dart';
-import 'package:dsf/block/profileimage_event.dart';
-import 'package:dsf/block/profileimage_state.dart';
-import 'package:dsf/profile_avatar_c/image_demo_editor.dart';
-import 'package:dsf/profile_avatar_c/page_editor_image.dart';
+import 'package:dsf/block_avatar_image/profileimage_block.dart';
+import 'package:dsf/block_avatar_image/profileimage_event.dart';
+import 'package:dsf/block_avatar_image/profileimage_state.dart';
+import 'package:dsf/profile_avatar_image/asset_processing.dart';
 
-import 'package:dsf/profile_avatar_c/sfer.dart';
+import './image_demo_editor.dart';
+import './page_editor_image.dart';
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_manager/photo_manager.dart';

@@ -1,8 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
-import 'package:dsf/block/profileimage_event.dart';
-import 'package:dsf/block/profileimage_state.dart';
+
+import 'package:dsf/block_avatar_image/profileimage_event.dart';
+import 'package:dsf/block_avatar_image/profileimage_state.dart';
+
 import 'package:flutter/cupertino.dart';
 
 
