@@ -303,22 +303,6 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     });
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return GestureDetector(
-  //     onTap: () => _updateSize(),
-  //     child: Container(
-  //       color: Colors.amberAccent,
-  //       child: AnimatedSize(
-  //         curve: Curves.easeIn,
-  //         vsync: this,
-  //         duration: const Duration(seconds: 1),
-  //         child: FlutterLogo(size: _size),
-  //       ),
-  //     ),
-  //   );
-  // }
-
 
 
 

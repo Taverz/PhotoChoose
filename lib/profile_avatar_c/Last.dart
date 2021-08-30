@@ -421,52 +421,56 @@ class _MenuViewState extends State<MenuView> with TickerProviderStateMixin {
                           // _bloc.choiseElement( index);
                         },
                         child: Container(
-                          width: choiseB ? 85 : 100,
-                          height: choiseB ? 85 : 100,
-                          child: Stack(
-                            children: [
-                              //Image
-                              Positioned(
-                                  child:
-                                      // FutureBuilder<Uint8List?>(
-                                      //     future: getImg(data),
-                                      //     builder: (context, AsyncSnapshot<Uint8List?> async) =>
-                                      // GestureDetector(
-                                      //   onTap: (){
-                                      //       //Препросмотр
-                                      //   },
-                                      //   child:
-                                      getImage(assyn.data)
-                                  // )
-                                  // )
+                          width:  100,
+                            height:  100,
+                          child: Container(
+                            width: choiseB ? 85 : 100,
+                            height: choiseB ? 85 : 100,
+                            child: Stack(
+                              children: [
+                                //Image
+                                Positioned(
+                                    child:
+                                        // FutureBuilder<Uint8List?>(
+                                        //     future: getImg(data),
+                                        //     builder: (context, AsyncSnapshot<Uint8List?> async) =>
+                                        // GestureDetector(
+                                        //   onTap: (){
+                                        //       //Препросмотр
+                                        //   },
+                                        //   child:
+                                        getImage(assyn.data)
+                                    // )
+                                    // )
+                                    ),
+                                //Пометить что он выбран
+                                Positioned(
+                                  top: 5,
+                                  right: 5,
+                                  // child: GestureDetector(
+                                  //   onTap: (){
+                                  //       // просто выбор
+                                  //   },
+                                  child: Container(
+                                    width: 30,
+                                    height: 30,
+                                    child: IconButton(
+                                      onPressed: () {},
+                                      icon: choiseB
+                                          ? Icon(
+                                              Icons.check_circle,
+                                              color: Colors.blue,
+                                            )
+                                          : Icon(
+                                              Icons.radio_button_unchecked,
+                                              color: Colors.white,
+                                            ),
+                                    ),
                                   ),
-                              //Пометить что он выбран
-                              Positioned(
-                                top: 5,
-                                right: 5,
-                                // child: GestureDetector(
-                                //   onTap: (){
-                                //       // просто выбор
-                                //   },
-                                child: Container(
-                                  width: 30,
-                                  height: 30,
-                                  child: IconButton(
-                                    onPressed: () {},
-                                    icon: choiseB
-                                        ? Icon(
-                                            Icons.check_circle,
-                                            color: Colors.blue,
-                                          )
-                                        : Icon(
-                                            Icons.radio_button_unchecked,
-                                            color: Colors.white,
-                                          ),
-                                  ),
-                                ),
-                                // )
-                              )
-                            ],
+                                  // )
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       );
